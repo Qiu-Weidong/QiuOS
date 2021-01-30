@@ -25,6 +25,7 @@ SectorNumOfRootDirStart equ 19                      ; 根目录的起始扇区�
                                                     ; 1是保留扇区大小，9是fat大小，2是fat个数
 
 FATSz                   equ 9                       ; FAT表所占扇区数，对FAT12来说是9
+FileNameLen             equ 11
 
 BPB_BytesPerSec         equ  512                    ; 每扇区字节数
 BPB_SecPerClus          equ  1                      ; 每簇扇区数

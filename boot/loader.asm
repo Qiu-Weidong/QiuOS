@@ -6,7 +6,6 @@
 TopOfStack     equ     OffsetOfLoader          ; 栈基址
 
     jmp _start
-; %include "fat12hdr.inc"
 
 ; GDT
 ;                               段基址,     段界限, 属性
@@ -38,12 +37,6 @@ readyMessage                db "Ready!"
 readyMessageLen             equ $ - readyMessage
 
 
-; 变量
-SectorCurrent:              dw 0   ; 当前扇区号
-
-ClusNo:                     dw 0   ; 簇号
-curFatSector:               dw -1  ; 当前加载的fat表扇区号
-
 _start:
     mov ax, cs
     mov es, ax
@@ -57,36 +50,12 @@ _start:
     int 0x13
 
     ; 从这里开始查找kernel.bin文件
-    mov word [SectorCurrent], SectorNumOfRootDirStart ; 初始化SectorCurrent
-    mov ax, BaseOfKernel                    ; '.
-    mov es, ax                              ;  | 设置es:bx指向BaseOfKernel:OffsetOfKernel
-    mov bx, OffsetOfKernel                  ;  /
-Search_for_kernel:
+    push kernelFileName
+    call searchFile
+    add esp, 2
+    test ax, ax
+    jnz KERNEL_FOUND
 
-    mov ax, word [SectorCurrent]            ; '.
-    mov cl, 1                               ;  | 读取SectorCurrent所在的扇区
-    call ReadSector                         ;  /
-
-    mov si, kernelFileName
-    mov di, OffsetOfKernel        
-    xor dx, dx                              ; 每个扇区16个条目，此处用dx来循环
-Search_in_one_Sector:
-    mov cx, kernelFileNameLen               ; 设置字符串长度11
-    call strcmp
-    cmp al, 0                               ; al=0表示两个字符串相同
-    je  KERNEL_FOUND
-
-    and di, 0xffe0
-    add di, 0x0020
-    mov si, kernelFileName
-    inc dx
-    cmp dx, 0x10
-    jl  Search_in_one_Sector  
-
-    inc word [SectorCurrent]
-    cmp word [SectorCurrent], RootDirSectors+SectorNumOfRootDirStart
-    jl  Search_for_kernel
-    
     ; 这里表示没有找到kernel.bin
     mov ax, cs                                  ; 0x7ede
     mov es, ax
@@ -101,6 +70,9 @@ Search_in_one_Sector:
 
 ; kernel.bin文件找到了
 KERNEL_FOUND:
+    push OffsetOfKernel
+    push BaseOfKernel
+    push ax
     ; 显示字符串,地址在es:bp中
     mov ax, cs                                  ; 0x7ef5
     mov es, ax
@@ -111,72 +83,8 @@ KERNEL_FOUND:
     mov cx, kernelFoundMessageLen               ; cx表示字符串长度
     int 0x10                                    ; 0x7f08
 
-    ; 从这里开始加载kernel.bin
-    mov ax, BaseOfKernel            ; '.
-    mov es, ax                      ;  | 初始化es:bx
-    mov bx, OffsetOfKernel          ;  /
-    and di, 0xffe0                  ; '.
-    add di, 0x001a                  ;   此时di指向起始簇号
-    mov ax, word [es:di]            ; 将ClusNo的值放入ax中
-    mov word [ClusNo], ax
-
-LOAD_START:
-    mov ax, word [ClusNo]
-    ; 簇号+31得到扇区号
-    add ax, RootDirSectors+SectorNumOfRootDirStart-2  
-    mov cl, 1
-    call ReadSector
-    add bx, BPB_BytesPerSec
-
-    push bx
-
-    mov dx, word [ClusNo]
-    mov ax, dx        ; ax = dx = CLusNo
-    shl ax, 1         ; ax = 2*ClusNo, dx = ClusNo
-    add ax, dx        ; ax = 3*ClusNo
-    shr ax, 1         ; ax = 3*ClusNo / 2 = bios
-    xor dx, dx        ; dx:ax = bios     
-
-
-    mov bx, BPB_BytesPerSec
-    div bx            ; ax = bios / 512 , dx = bios % 512
-    add ax, 1         ; ax = bios / 512 + 1
-    
-    ; 设置es:bx->fat表缓冲区
-    mov bx, ax
-    mov ax, BaseOfFAT
-    mov es, ax
-    mov ax, bx
-    mov bx, OffsetOfFAT
-    
-    cmp ax, word [curFatSector]
-    jz CONTINUE
-    push dx
-    mov word [curFatSector], ax
-    mov cl, 2
-    call ReadSector   
-    pop dx
-CONTINUE:
-    add bx, dx          ; es:bx -> fat+bios
-    mov cx, word [es:bx] ; cx -> item
-    mov ax, [ClusNo]
-    and ax, 0x1          ; ax = CLusNo的最后一位
-    jz EVEN
-    shr cx, 4 
-EVEN:
-    and cx, 0x0fff
-
-    mov ah, 0x0e
-    mov al, '.'
-    mov bl, 0x0f
-    int 0x10
-
-    pop bx
-    mov ax, BaseOfKernel       
-    mov es, ax   
-    mov word [ClusNo], cx
-    cmp cx, 0x0ff8
-    jl LOAD_START
+    call loadFile
+    add esp, 6
 
 LOAD_SUCCESS:
     ; 来到这里表示加载完成
