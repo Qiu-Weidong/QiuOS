@@ -32,7 +32,7 @@ $(BOOT) : boot/boot.asm boot/include/const.inc boot/include/lib16.inc
 	@echo "\033[49;34mBuild $(BOOT)\033[0m"
 	@$(ASM) $(ASMFLAGS) -o $@ $< 
 
-$(LOADER) : ./boot/loader.asm ./boot/include/const.inc ./boot/include/lib16.inc ./boot/include/pm.inc
+$(LOADER) : boot/loader.asm boot/include/const.inc boot/include/lib16.inc boot/include/pm.inc boot/include/lib32.inc
 	@echo "\033[49;33mBuild $(LOADER)\033[0m"
 	@$(ASM) $(ASMFLAGS) -o $@ $<
 

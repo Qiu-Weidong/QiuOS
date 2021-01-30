@@ -1,9 +1,9 @@
 %include "const.inc" 
 
     org OffsetOfBoot
-TopOfStack             equ OffsetOfBoot             ; 栈基址
+TopOfStack          equ OffsetOfBoot             ; 栈基址
 
-BS_jmpBoot:         jmp short _start                ; 跳转指令，长度3，jmp short只有两个字节，nop占位
+_BS_jmpBoot:        jmp short _start                ; 跳转指令，长度3，jmp short只有两个字节，nop占位
                     nop                             ; nop占位
 _BS_OEMName:        db 'Qiuboot',0                  ; 生产厂商名，长度8
 _BPB_BytesPerSec:   dw  BPB_BytesPerSec             ; 每扇区字节数
@@ -34,11 +34,11 @@ _start:
     mov sp,TopOfStack
 
     ; 清屏
-    mov ax, 0x0600                  ; ah=6, al=0, 0表示清屏
-    mov bx, 0x0700                  ; bl=0x7,黑底白字
-    mov cx, 0x0000                  ; (ch,cl) = (0,0) 左上角
-    mov dx, 0x184f                  ; 右下角:(80,50)
-    int 0x10                        ; 0x10号中断
+    mov ax, 0x0600                                  ; ah=6, al=0, 0表示清屏
+    mov bx, 0x0700                                  ; bl=0x7,黑底白字
+    mov cx, 0x0000                                  ; (ch,cl) = (0,0) 左上角
+    mov dx, 0x184f                                  ; 右下角:(80,50)
+    int 0x10                                        ; 0x10号中断
 
     ; 重置软盘
     xor ah, ah
@@ -57,11 +57,11 @@ _start:
 LOADER_NOT_FOUND:
     mov ax, cs
     mov es, ax
-    mov ax, 0x1301                  ; ah=0x13表示输出字符串，al=0x01表示输出后光标位于字符串后面
-    mov bx, 0x0004                  ; bh=0x0表示显示第0页，bl=0x04表示红色
-    mov dx, 0x0100                  ; dh=0x11表示显示在第17行，dl=0x0表示显示在第0列
-    mov bp, LoaderNotFoundMessage   ; es:bp指向带显示字符串地址
-    mov cx, LoaderNotFoundMessageLen    ; cx表示字符串长度
+    mov ax, 0x1301                                  ; ah=0x13表示输出字符串，al=0x01表示输出后光标位于字符串后面
+    mov bx, 0x008c                                  ; bh=0x0表示显示第0页，bl=0x04表示红色高亮闪烁
+    mov dx, 0x0000                                  ; dh=0x11表示显示在第0行，dl=0x0表示显示在第0列
+    mov bp, LoaderNotFoundMessage                   ; es:bp指向带显示字符串地址
+    mov cx, LoaderNotFoundMessageLen                ; cx表示字符串长度
     int 0x10
 
     jmp $
@@ -77,8 +77,8 @@ LOADER_FOUND:
     mov ax, cs
     mov es, ax
     mov ax, 0x1301
-    mov bx, 0x0002
-    mov dx, 0x0100
+    mov bx, 0x000f                                  ; 白色高亮
+    mov dx, 0x0000
     mov bp, LoaderFoundMessage
     mov cx, LoaderFoundMessageLen
     int 0x10 
@@ -92,27 +92,16 @@ LOAD_SUCCESS:
 
 %include "lib16.inc"
 
-LoaderFileName: db "LOADER  BIN" 
-LoaderFileNameLen equ $ - LoaderFileName
+LoaderFileName:             db "LOADER  BIN" 
+LoaderFileNameLen           equ $ - LoaderFileName
 
-LoaderFoundMessage: db "booting"
-LoaderFoundMessageLen equ $ - LoaderFoundMessage
+LoaderFoundMessage:         db "booting"
+LoaderFoundMessageLen       equ $ - LoaderFoundMessage
 
-LoaderNotFoundMessage: db "no loader"
-LoaderNotFoundMessageLen equ $ - LoaderNotFoundMessage
+LoaderNotFoundMessage:      db "no loader"
+LoaderNotFoundMessageLen    equ $ - LoaderNotFoundMessage
 
 
-times 510 - ($-$$) db 0
+times 510 - ($-$$)          db 0
 dw 0xaa55
 
-
-; 查找loader.bin文件伪代码
-
-; for(sectorCurrent=19;sectorCurrent<33;sectorCurrent++)
-;       ReadSector
-;       for i=0; i < 16 ; i++
-;           strcmp
-;           j al==0 LOADER_FOUND
-;           di &= 0xfe00
-;           di += 0x20
-; NOT_FOUND

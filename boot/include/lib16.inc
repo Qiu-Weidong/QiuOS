@@ -1,4 +1,7 @@
 ; =============== 实模式下的常用函数 ================
+%ifndef LIB16_INC_
+%define LIB16_INC_
+
 %include "const.inc"
 
 ; 字符串比较函数, 测试通过
@@ -28,18 +31,18 @@ ReadSector:
     ; 每磁道扇区数(这里是BPB_SecPerTrk)     \ 余数 R -> 起始扇区号 R+1
     push bp
     mov bp, sp 
-    sub esp, 2                      ; 开辟两个字节的空间
+    sub esp, 2                                  ; 开辟两个字节的空间
 
-    mov byte [bp-2], cl             ; 在栈上保存cl, 必须两字节对齐
+    mov byte [bp-2], cl                         ; 在栈上保存cl, 必须两字节对齐
     mov cx, BPB_SecPerTrk
-    div cl                          ; cl保存着扇区号18，ah=R，al=Q
+    div cl                                      ; cl保存着扇区号18，ah=R，al=Q
     mov ch, al
-    shr ch, 1                       ; 柱面号 = Q >> 1
+    shr ch, 1                                   ; 柱面号 = Q >> 1
     mov cl, ah   
-    inc cl                          ; 起始扇区号 = R+1
-    mov dl, BS_DrvNum             ; 驱动器号
+    inc cl                                      ; 起始扇区号 = R+1
+    mov dl, BS_DrvNum                           ; 驱动器号
     mov dh, al
-    and dh, 0x1                     ; 磁头号 Q & 1
+    and dh, 0x1                                 ; 磁头号 Q & 1
 .readagain:
     mov ah, 0x2
     mov al, byte [bp-2]
@@ -50,17 +53,6 @@ ReadSector:
     pop bp
     ret
 
-; KillMotor只在loader中使用，因此在boot中不编译
-%ifdef LOADER
-KillMotor:
-	push	dx
-	mov	dx, 03F2h
-	mov	al, 0
-	out	dx, al
-	pop	dx
-	ret
-%endif ; LOADER
-
 ; 查找文件函数
 ; short searchFile(char * filename)
 ;       filename -> [sp+2]
@@ -70,13 +62,13 @@ searchFile:
     mov bp, sp
     sub esp, 2                                  ; 为SectorCurrent分配空间
     
-    mov word [bp-2], SectorNumOfRootDirStart      ; 初始化SectorCurrent
+    mov word [bp-2], SectorNumOfRootDirStart    ; 初始化SectorCurrent
     mov ax, BaseOfFAT                           ; '.
     mov es, ax                                  ;  | 设置es:bx指向BaseOfFAT:OffsetOfFAT
     mov bx, OffsetOfFAT                         ;  /
 Search_for_file:                                ; 外层循环起始处
     
-    mov ax, word [bp-2]                           ; '.
+    mov ax, word [bp-2]                         ; '.
     mov cl, 1                                   ;  | 读取SectorCurrent所在扇区 
     call ReadSector                             ;  /
 
@@ -183,3 +175,5 @@ Load_end:
     pop bp
     ret
 
+
+%endif ; LIB16_INC_
