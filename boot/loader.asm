@@ -1,11 +1,12 @@
 %include "const.inc"
 %include "pm.inc"    
+%define LOADER
 
     org OffsetOfLoader
 TopOfStack     equ     OffsetOfLoader          ; 栈基址
 
     jmp _start
-%include "fat12hdr.inc"
+; %include "fat12hdr.inc"
 
 ; GDT
 ;                               段基址,     段界限, 属性
@@ -125,7 +126,7 @@ LOAD_START:
     add ax, RootDirSectors+SectorNumOfRootDirStart-2  
     mov cl, 1
     call ReadSector
-    add bx, word [BPB_BytesPerSec]
+    add bx, BPB_BytesPerSec
 
     push bx
 
@@ -137,7 +138,7 @@ LOAD_START:
     xor dx, dx        ; dx:ax = bios     
 
 
-    mov bx, word [BPB_BytesPerSec] 
+    mov bx, BPB_BytesPerSec
     div bx            ; ax = bios / 512 , dx = bios % 512
     add ax, 1         ; ax = bios / 512 + 1
     
@@ -209,63 +210,8 @@ LOAD_SUCCESS:
     ; 进入保护模式
     jmp dword SelectorFlatC:(BaseOfLoaderPhyAddr+PM_START)
 
-; 读取软盘函数, 测试通过
-; ax = 要读取的扇区号
-; cl = 要读取的扇区数
-; es:bx -> 数据缓冲区
-ReadSector:
-    ; 转换公式如下
-    ;                                              / 柱面号 Q >> 1 
-    ;             扇区号                   /  商 Q |
-    ; ———————————————————————————————— =  |        \ 磁头号 Q & 1
-    ; 每磁道扇区数(这里是BPB_SecPerTrk)     \ 余数 R -> 起始扇区号 R+1
-    push bp
-    mov bp, sp 
-    sub esp, 2                 ; 开辟两个字节的空间
+%include "lib16.inc"
 
-    mov byte [bp-2], cl        ; 在栈上保存cl
-    mov cx, [BPB_SecPerTrk]
-    div cl                     ; cl保存着扇区号18，ah=R，al=Q
-    mov ch, al
-    shr ch, 1                  ; 柱面号 = Q >> 1
-    mov cl, ah   
-    inc cl                     ; 起始扇区号 = R+1
-    mov dl, [BS_DrvNum]        ; 驱动器号
-    mov dh, al
-    and dh, 0x1                ; 磁头号 Q & 1
-.readagain:
-    mov ah, 0x2
-    mov al, byte [bp-2]
-    int 0x13
-    jc .readagain
-
-    add esp, 2
-    pop bp
-    ret
-
-; 字符串比较函数, 测试通过
-; ds:[si] -> str1, es:[di] -> str2
-; 相同则al为0，否则al非0
-strcmp:
-    cld
-    add cx, di
-st: lodsb
-    sub al, [es:di]
-    jnz ed
-    inc di
-    cmp di, cx
-    jl  st
-ed: ret
-
-
-
-KillMotor:
-	push	dx
-	mov	dx, 03F2h
-	mov	al, 0
-	out	dx, al
-	pop	dx
-	ret
 
 [SECTION .s32]
 align 32

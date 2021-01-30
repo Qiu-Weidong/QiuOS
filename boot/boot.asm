@@ -1,14 +1,29 @@
 %include "const.inc" 
 
-
     org OffsetOfBoot
-TopOfStack             equ OffsetOfBoot          ; 栈基址
+TopOfStack             equ OffsetOfBoot             ; 栈基址
 
-BS_jmpBoot:
-    jmp short _start
-    nop                             ; 跳转指令，长度3，jmp short只有两个字节，nop占位
-
-%include "fat12hdr.inc"
+BS_jmpBoot:         jmp short _start                ; 跳转指令，长度3，jmp short只有两个字节，nop占位
+                    nop                             ; nop占位
+_BS_OEMName:        db 'Qiuboot',0                  ; 生产厂商名，长度8
+_BPB_BytesPerSec:   dw  BPB_BytesPerSec             ; 每扇区字节数
+_BPB_SecPerClus:    db  BPB_SecPerClus              ; 每簇扇区数
+_BPB_RsvdSecCnt:    dw  BPB_RsvdSecCnt              ; 保留扇区数，包含了引导扇区
+_BPB_NumFATs:       db  BPB_NumFATs                 ; FAT表的个数，建议为2
+_BPB_RootEntCnt:    dw  BPB_RootEntCnt              ; 根目录可以容纳的目录项数
+_BPB_TotSec16:      dw  BPB_TotSec16                ; 总扇区数
+_BPB_MEdia:         db  BPB_MEdia                   ; 介质描述符
+_BPB_FATSz16:       dw  BPB_FATSz16                 ; 每个FAT表所占扇区数
+_BPB_SecPerTrk:     dw  BPB_SecPerTrk               ; 每磁道扇区数
+_BPB_NumHeads:      dw  BPB_NumHeads                ; 磁头数
+_BPB_HiddSec:       dd  BPB_HiddSec                 ; 隐藏扇区数
+_BPB_TotSec32:      dd  BPB_TotSec32                ; 如果BPB_TotSec16为0，则使用这个值
+_BS_DrvNum:         db  BS_DrvNum                   ; int 0x13 的驱动器号
+_BS_Reservedl:      db  BS_Reservedl                ; 未使用
+_BS_BootSig:        db  BS_BootSig                  ; 扩展引导标记
+_BS_VolID:          dd  BS_VolID                    ; 卷序列号
+_BS_VolLab:         db  'boot loader'               ; 卷标，系统显示的磁盘名称
+_BS_FileSysType:    db  'FAT12   '                  ; 文件系统类型
 
 ; 引导代码
 _start: 
@@ -70,6 +85,7 @@ Search_in_one_Sector:
     jl  Search_for_loader
     
     ; 这里表示没有找到loader.bin
+LOADER_NOT_FOUND:
     mov ax, cs
     mov es, ax
     mov ax, 0x1301                  ; ah=0x13表示输出字符串，al=0x01表示输出后光标位于字符串后面
@@ -108,7 +124,7 @@ LOAD_START:
     add ax, RootDirSectors+SectorNumOfRootDirStart-2  
     mov cl, 1
     call ReadSector
-    add bx, word [BPB_BytesPerSec]
+    add bx, BPB_BytesPerSec
 
     push bx
 
@@ -119,7 +135,7 @@ LOAD_START:
     shr ax, 1                       ; ax = 3*ClusNo / 2 = bios
     xor dx, dx                      ; dx:ax = bios     
 
-    mov bx, word [BPB_BytesPerSec] 
+    mov bx, BPB_BytesPerSec 
     div bx                          ; ax = bios / 512 , dx = bios % 512
     add ax, 1                       ; ax = bios / 512 + 1
     
@@ -163,57 +179,7 @@ LOAD_SUCCESS:
     ; 来到这里表示加载完成
     jmp BaseOfLoader:OffsetOfLoader
 
-; 字符串比较函数, 测试通过
-; ds:[si] -> str1, es:[di] -> str2
-; 相同则al为0，否则al非0
-strcmp:
-    cld
-    add cx, di
-st: lodsb
-    sub al, [es:di]
-    jnz ed
-    inc di
-    cmp di, cx
-    jl  st
-ed: ret
-
-
-; 读取软盘函数, 测试通过
-; ax = 要读取的扇区号
-; cl = 要读取的扇区数
-; es:bx -> 数据缓冲区
-ReadSector:
-    ; 转换公式如下
-    ;                                              / 柱面号 Q >> 1 
-    ;             扇区号                   /  商 Q |
-    ; ———————————————————————————————— =  |        \ 磁头号 Q & 1
-    ; 每磁道扇区数(这里是BPB_SecPerTrk)     \ 余数 R -> 起始扇区号 R+1
-    push bp
-    mov bp, sp 
-    sub esp, 2                      ; 开辟两个字节的空间
-
-    mov byte [bp-2], cl             ; 在栈上保存cl
-    mov cx, [BPB_SecPerTrk]
-    div cl                          ; cl保存着扇区号18，ah=R，al=Q
-    mov ch, al
-    shr ch, 1                       ; 柱面号 = Q >> 1
-    mov cl, ah   
-    inc cl                          ; 起始扇区号 = R+1
-    mov dl, [BS_DrvNum]             ; 驱动器号
-    mov dh, al
-    and dh, 0x1                     ; 磁头号 Q & 1
-.readagain:
-    mov ah, 0x2
-    mov al, byte [bp-2]
-    int 0x13
-    jc .readagain
-
-    add esp, 2
-    pop bp
-    ret
-
-
-
+%include "lib16.inc"
 
 
 BootMessage: db "Welcome to QiuOS World!"
