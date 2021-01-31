@@ -2,42 +2,42 @@
 #define ELF_H_
 
 #define EI_NIDENT 16
-typedef unsigned int        Elf32_Addr;
-typedef unsigned short      Elf32_Half;
-typedef unsigned int        Elf32_Off;
-typedef unsigned int        Elf32_Sword;
-typedef unsigned int        Elf32_Word;
+typedef unsigned int        Elf32_Addr;     // 无符号地址
+typedef unsigned short      Elf32_Half;     // 无符号段整数
+typedef unsigned int        Elf32_Off;      // 无符号文件偏移
+typedef signed int          Elf32_Sword;    // 有符号大整数
+typedef unsigned int        Elf32_Word;     // 无符号大整数
 
 // ELF header
 typedef struct
 {
-    unsigned char   e_ident[EI_NIDENT];     // 用来标识一个elf文件
-    Elf32_Half      e_type;                 // 文件的类型，2表示可执行文件
-    Elf32_Half      e_machine;              // 运行程序需要的体系结构，3表示intel80386
-    Elf32_Word      e_version;              // 文件的版本
-    Elf32_Addr      e_entry;                // 程序的入口地址，一般为0x80480A0
-    Elf32_Off       e_phoff;                // program header table在文件中的偏移量(字节为单位)
-    Elf32_Off       e_shoff;                // Section header table在文件中的偏移(字节为单位)
-    Elf32_Word      e_flags;                // 对IA32而言，为0
-    Elf32_Half      e_ehsize;               // ELF header的大小(字节为单位)
-    Elf32_Half      e_phentsize;            // program header table每个条目的大小
-    Elf32_Half      e_phnum;                // program header table的条目个数
-    Elf32_Half      e_shentsize;            // section header table的每个条目的大小
-    Elf32_Half      e_shnum;                // section header table的条目个数
-    Elf32_Half      e_shstrndx;             // 包含节名称的字符串表是第几个节(从零开始)
+    unsigned char   e_ident[EI_NIDENT];     // 用来标识一个elf文件                                 0
+    Elf32_Half      e_type;                 // 文件的类型，2表示可执行文件                          16
+    Elf32_Half      e_machine;              // 运行程序需要的体系结构，3表示intel80386              18
+    Elf32_Word      e_version;              // 文件的版本                                          20
+    Elf32_Addr      e_entry;                // 程序的入口地址，一般为0x80480A0                      24
+    Elf32_Off       e_phoff;                // program header table在文件中的偏移量(字节为单位)     28
+    Elf32_Off       e_shoff;                // Section header table在文件中的偏移(字节为单位)       32
+    Elf32_Word      e_flags;                // 对IA32而言，为0                                     36
+    Elf32_Half      e_ehsize;               // ELF header的大小(字节为单位)                         40
+    Elf32_Half      e_phentsize;            // program header table每个条目的大小                   42
+    Elf32_Half      e_phnum;                // program header table的条目个数                       44
+    Elf32_Half      e_shentsize;            // section header table的每个条目的大小                 46
+    Elf32_Half      e_shnum;                // section header table的条目个数                       48
+    Elf32_Half      e_shstrndx;             // 包含节名称的字符串表是第几个节(从零开始)                50
 } Elf32_Ehdr;
 
 // Program header
 typedef struct
 {
-    Elf32_Word      p_type;                 // 当前Program header所描述的段的类型
-    Elf32_Off       p_offset;               // 段的第一个字节在文件中的偏移
-    Elf32_Addr      p_vaddr;                // 段的第一个字节在内存中的虚拟地址
-    Elf32_Addr      p_paddr;                // 段的第一个字节在内存中的物理地址，用于在物理地址定位相关的体系中
-    Elf32_Word      p_filesz;               // 段在文件中的长度
-    Elf32_Word      p_memsz;                // 段在内存中的长度
-    Elf32_Word      p_flags;                // 与段相关的标志
-    Elf32_Word      p_align;                // 段在文件以及内存中如何对齐
+    Elf32_Word      p_type;                 // 当前Program header所描述的段的类型                               0
+    Elf32_Off       p_offset;               // 段的第一个字节在文件中的偏移                                      4
+    Elf32_Addr      p_vaddr;                // 段的第一个字节在内存中的虚拟地址                                   8
+    Elf32_Addr      p_paddr;                // 段的第一个字节在内存中的物理地址，用于在物理地址定位相关的体系中     12
+    Elf32_Word      p_filesz;               // 段在文件中的长度                                                 16
+    Elf32_Word      p_memsz;                // 段在内存中的长度                                                 20
+    Elf32_Word      p_flags;                // 与段相关的标志                                                   24
+    Elf32_Word      p_align;                // 段在文件以及内存中如何对齐                                        28
 } Elf32_Phdr;
 
 // Section header

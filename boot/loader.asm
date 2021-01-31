@@ -127,7 +127,7 @@ Mem_chk_success:
     mov cr0, eax
 
     ; 进入保护模式
-    jmp dword SelectorFlatC:(BaseOfLoaderPhyAddr+PM_START)
+    jmp dword SelectorFlatC:(BaseOfLoaderPhyAddr+PM_START)          ; 0x7ef2
 
 %include "lib16.inc"
 
@@ -172,7 +172,46 @@ PM_START:
     add edi, 4                                  ; 空两格
     call disEax
 
-    jmp $
+
+    ; 读取从elf header中读取以下信息
+    ; start of program headers      e_phoff     4字节，偏移28
+    ; size of program headers       e_phentsize 2字节，偏移42
+    ; number of program headers     e_phnum     2字节，44
+    ; entry point address           e_entry     4字节，24
+
+    ; 循环number of program headers, 读取每条program header的以下信息
+    ; offset                        p_offset    4字节，偏移4
+    ; virtaddr或physaddr            p_vaddr     4字节，8
+    ; filesiz                       p_filesz    4字节，16                  
+    ; 将每个program header移动到virtaddr处，移动filesiz字节
+
+    ; kernel地址：BaseOfKernel:OffsetOfKernel
+
+    mov edx, BaseOfKernel                       ; '. 
+    shl edx, 4                                  ;  | 计算kernel存放的地址
+    add edx, OffsetOfKernel                     ;  /
+
+    mov edi, edx                                ; edi -> kernel
+    mov esi, edx
+
+    movzx ebx, word [edi+42]                    ; ebx -> e_phentsize
+    movzx ecx, word [edi+44]                    ; ecx -> e_phnum
+
+    add edi, dword [edi+28]                     ; edi -> program header table
+Go_on_copy:
+
+    mov eax, dword [edi+4]                      ; eax -> p_offset
+    add eax, edx                                ; eax 为当前段在内存中的起始地址
+    push dword [edi+16]                         ; push p_filesz
+    push eax
+    push dword [edi+8]                          ; push p_vaddr
+    call memcpy
+    add esp, 12
+    add edi, ebx                                ; edi指向下一个program header
+
+    loop Go_on_copy
+    
+    jmp dword [esi+24]                          ; 进入内核
 
 
 ; 一些保护模式下要用到的数据

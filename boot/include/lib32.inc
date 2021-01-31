@@ -194,4 +194,28 @@ Check_MCRCount:
     ret
 
 
+; void * memcpy(void * pDest, const void * pSrc, const unsigned int n);
+; 如果内存重叠，该函数不保证正确性
+memcpy:
+    push ebp
+    mov ebp, esp
+    push ecx
+    push edi
+    push esi
+
+    mov ecx, [ebp+16]                       ; ecx -> n
+    mov esi, [ebp+12]
+    mov edi, [ebp+8]
+    cld
+mem_loop:
+    lodsb
+    stosb
+    loop mem_loop
+
+    pop esi
+    pop edi
+    pop ecx
+    pop ebp
+    ret
+
 %endif ; LIB32_INC_

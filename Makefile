@@ -45,7 +45,7 @@ build/kernel.o : ./kernel/kernel.asm ./include/const.h ./include/protect.h ./inc
 
 $(KERNEL): build/kernel.o 
 	@echo "\033[49;35mLink kernel\033[0m"
-	@ld -s -m elf_i386 -o $@ $<
+	@ld -s -Ttext 0x18060 -m elf_i386 -o $@ $<
 
 clean:
 	@rm -rf $(BUILD)
