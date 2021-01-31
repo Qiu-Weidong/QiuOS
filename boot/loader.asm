@@ -1,6 +1,5 @@
 %include "const.inc"
 %include "pm.inc"    
-%define LOADER
 
     org OffsetOfLoader
 TopOfStack     equ     OffsetOfLoader                                           ; 栈基址
@@ -43,20 +42,18 @@ _start:
     mov ss, ax
     mov sp, TopOfStack
 
-    ; 重置软盘
-    xor ah, ah
-    xor dl, dl
-    int 0x13
+    xor ah, ah                                  ; '.
+    xor dl, dl                                  ;  | 重置软盘
+    int 0x13                                    ;  /
 
-    ; 从这里开始查找kernel.bin文件
-    push kernelFileName
-    call searchFile
-    add esp, 2
+    push kernelFileName                         ; '.
+    call searchFile                             ;  | 使用searchFile函数查找kernel.bin
+    add esp, 2                                  ;  /
+
     test ax, ax
-    jnz KERNEL_FOUND
+    jnz KERNEL_FOUND                            ; 通过ax判断是否找到
 
-    ; 这里表示没有找到kernel.bin
-    mov ax, cs                                  ; 0x7ede
+    mov ax, cs                                 
     mov es, ax
     mov ax, 0x1301                              ; ah=0x13表示输出字符串，al=0x01表示输出后光标位于字符串后面
     mov bx, 0x008c                              ; bh=0x0表示显示第0页，bl=0x04表示红色
@@ -65,13 +62,12 @@ _start:
     mov cx, kernelNotFoundLen                   ; cx表示字符串长度
     int 0x10
 
-    jmp $
+    jmp $                                       ; 无限循环
 
-; kernel.bin文件找到了
 KERNEL_FOUND:
-    push OffsetOfKernel
-    push BaseOfKernel
-    push ax
+    push OffsetOfKernel                         ; '.
+    push BaseOfKernel                           ;  | 为loadFile函数准备参数
+    push ax                                     ;  /
 
     ; 显示字符串,地址在es:bp中
     mov ax, cs                                  ; 0x7ef5
@@ -83,11 +79,11 @@ KERNEL_FOUND:
     mov cx, kernelFoundMessageLen               ; cx表示字符串长度
     int 0x10                                    ; 0x7f08
 
-    call loadFile
-    add esp, 6
+    call loadFile                               ; 加载kernel.bin
+    add esp, 6                                  ; 将参数出栈
 
 LOAD_SUCCESS:
-    ; 来到这里表示加载完成
+
     mov	dx, 03F2h                               ; '.
 	mov	al, 0                                   ;  | 关闭软驱马达
 	out	dx, al                                  ;  /
@@ -173,7 +169,7 @@ PM_START:
     add esp, 12
     
     pop eax
-    add edi, 4
+    add edi, 4                                  ; 空两格
     call disEax
 
     jmp $

@@ -1,7 +1,7 @@
 %include "const.inc" 
 
     org OffsetOfBoot
-TopOfStack          equ OffsetOfBoot             ; 栈基址
+TopOfStack          equ OffsetOfBoot                ; 栈基址
 
 _BS_jmpBoot:        jmp short _start                ; 跳转指令，长度3，jmp short只有两个字节，nop占位
                     nop                             ; nop占位
@@ -40,20 +40,17 @@ _start:
     mov dx, 0x184f                                  ; 右下角:(80,50)
     int 0x10                                        ; 0x10号中断
 
-    ; 重置软盘
-    xor ah, ah
-    xor dl, dl
-    int 0x13
+    xor ah, ah                                      ; '.
+    xor dl, dl                                      ;  | 重置软盘
+    int 0x13                                        ;  /
     
-    ; 从这里开始查找loader.bin文件
-    ; short searchFile(char * filename)
-    push LoaderFileName
-    call searchFile
-    add esp, 2
+    push LoaderFileName                             ; '.
+    call searchFile                                 ;  | 通过searchFile函数查找loader.bin
+    add esp, 2                                      ;  /
+
     test ax, ax
-    jnz LOADER_FOUND
+    jnz LOADER_FOUND                                ; 通过ax的返回值判断是否找到
     
-    ; 这里表示没有找到loader.bin
 LOADER_NOT_FOUND:
     mov ax, cs
     mov es, ax
@@ -64,15 +61,14 @@ LOADER_NOT_FOUND:
     mov cx, LoaderNotFoundMessageLen                ; cx表示字符串长度
     int 0x10
 
+
     jmp $
 
-; loader.bin文件找到了
 LOADER_FOUND:
-    ; 从这里开始加载loader.bin
-    ; void loadFile(short ClusNo, short base, short offset)
-    push OffsetOfLoader
-    push BaseOfLoader
-    push ax
+
+    push OffsetOfLoader                             ; '.
+    push BaseOfLoader                               ;  | 为loadFile函数准备参数
+    push ax                                         ;  /
     
     mov ax, cs
     mov es, ax
@@ -83,12 +79,11 @@ LOADER_FOUND:
     mov cx, LoaderFoundMessageLen
     int 0x10 
 
-    call loadFile
-    add esp, 6
+    call loadFile                                   ; 调用loadFile读取文件
+    add esp, 6                                      ; 将参数出栈
 
 LOAD_SUCCESS:
-    ; 来到这里表示加载完成
-    jmp BaseOfLoader:OffsetOfLoader
+    jmp BaseOfLoader:OffsetOfLoader                 ; 跳入loader开始执行
 
 %include "lib16.inc"
 
