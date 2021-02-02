@@ -84,32 +84,20 @@ KERNEL_FOUND:
 
 LOAD_SUCCESS:
 
-    mov	dx, 03F2h                               ; '.
-	mov	al, 0                                   ;  | 关闭软驱马达
-	out	dx, al                                  ;  /
+    call killMotor
+
+    mov al, 12
+    mov bl, 24
+    call disTime
 
     ; 通过0x15中断获取内存信息
     ; es:di指向地址范围描述符结构ARDS
     mov ax, ds
     mov es, ax
-    mov ebx, 0                                  ; 先将ebx置为0
-    mov di, _MemChkBuf                          ; 
-Mem_chk:
-    mov eax, 0xe820
-    mov ecx, 20
-    mov edx, 0534D4150h
-    int 0x15
-    jc Mem_chk_fail                             ; 出错了
-    add di, 20
-    inc dword [_MCRCount]                       ; 将MCR的数量加一
-    test ebx, ebx
-    jnz Mem_chk                                 ; 如果ebx不为零，继续
-    jmp Mem_chk_success 
-Mem_chk_fail:
-    mov dword [_MCRCount], 0
-
-
-Mem_chk_success:
+    mov di, _MemChkBuf     
+    call memchk
+    mov word [_MCRCount], ax
+    mov word [_MCRCount+2], 0
 
     ; 加载gdtr
     lgdt [GdtPtr]
@@ -130,7 +118,7 @@ Mem_chk_success:
     jmp dword SelectorFlatC:(BaseOfLoaderPhyAddr+PM_START)          ; 0x7ef2
 
 %include "lib16.inc"
-
+%include "loader.inc"
 
 [SECTION .s32]
 align 32

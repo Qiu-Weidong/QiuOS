@@ -32,7 +32,7 @@ $(BOOT) : boot/boot.asm boot/include/const.inc boot/include/lib16.inc
 	@echo "\033[49;34mBuild $(BOOT)\033[0m"
 	@$(ASM) $(ASMFLAGS) -o $@ $< 
 
-$(LOADER) : boot/loader.asm boot/include/const.inc boot/include/lib16.inc boot/include/pm.inc boot/include/lib32.inc
+$(LOADER) : boot/loader.asm boot/include/const.inc boot/include/lib16.inc boot/include/pm.inc boot/include/lib32.inc boot/include/loader.inc
 	@echo "\033[49;33mBuild $(LOADER)\033[0m"
 	@$(ASM) $(ASMFLAGS) -o $@ $<
 
@@ -48,5 +48,4 @@ $(KERNEL): build/kernel.o
 	@ld -s -Ttext 0x18060 -m elf_i386 -o $@ $<
 
 clean:
-	@rm -rf $(BUILD)
-	@rm $(IMG)
+	@rm -rf $(BUILD) $(IMG)
