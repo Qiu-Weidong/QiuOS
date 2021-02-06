@@ -15,7 +15,6 @@ BUILD 		:= build
 
 
 all: $(BUILD) $(IMG) 
-	@echo "\033[49;32mBuild Sucess ===> QiuOS.img\033[0m"
 
 $(BUILD):
 	@mkdir $@
@@ -29,8 +28,7 @@ $(IMG): $(BOOT) $(LOADER) $(KERNEL)
 	@sudo cp $(LOADER) $(KERNEL) /mnt/floppy -v 			>/dev/null
 	@sudo sync
 	@sudo umount /mnt/floppy
-
-
+	@echo "\033[49;32mBuild Sucess ===> QiuOS.img\033[0m"
 
 $(BOOT) : boot/boot.asm boot/include/const.inc boot/include/lib16.inc
 	@echo "\033[49;34mBuild $(BOOT)\033[0m"

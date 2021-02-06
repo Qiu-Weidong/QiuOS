@@ -77,5 +77,4 @@ PG_USU		EQU	   0x4	; U/S 属性位值, 用户级
 %endmacro ; 共 8 字节
 
 
-
 %endif ; PM_INC_
