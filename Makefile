@@ -10,6 +10,10 @@ LOADER 		:= build/loader.bin
 KERNEL		:= build/kernel.bin
 BUILD 		:= build
 
+
+.PHONY:all clean debug
+
+
 all: $(BUILD) $(IMG) 
 	@echo "\033[49;32mBuild Sucess ===> QiuOS.img\033[0m"
 
@@ -18,8 +22,8 @@ $(BUILD):
 
 $(IMG): $(BOOT) $(LOADER) $(KERNEL)
 	@rm -rf *.img
-	@bximage $@ -q -mode=create -fd=1.44M 		>/dev/null
-	@dd if=$< of=$@ bs=512 count=1 conv=notrunc >/dev/null 2>/dev/null
+	@bximage $@ -q -mode=create -fd=1.44M 					>/dev/null
+	@dd if=$< of=$@ bs=512 count=1 conv=notrunc 			>/dev/null 2>/dev/null
 
 	@sudo mount $@ /mnt/floppy -t vfat -o loop
 	@sudo cp $(LOADER) $(KERNEL) /mnt/floppy -v 			>/dev/null
@@ -49,3 +53,6 @@ $(KERNEL): build/kernel.o
 
 clean:
 	@rm -rf $(BUILD) $(IMG)
+
+debug:$(IMG)
+	bochs -f bochsrc -q 	>/dev/null 2>/dev/null
