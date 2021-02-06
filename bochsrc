@@ -6,17 +6,20 @@
 megs: 32
 
 # filename of ROM images
-romimage:file="你的BIOS-bochs-latest文件所在目录"
-vgaromimage:file="你的VGABIOS-lgpl-latest文件所在目录"
+romimage:file="C:/Program Files/Bochs-2.6.11/BIOS-bochs-latest"
+vgaromimage:file="C:/Program Files/Bochs-2.6.11/VGABIOS-lgpl-latest"
 
 # what disk images will be used
-floppya:1_44=boot.img, status=inserted
+floppya:1_44=QiuOS.img, status=inserted
 
 # choose the boot disk
 boot: floppy 
 
 # where do we send log message 
 log: bochsout.txt
-
 # disable the mouse
+
 mouse: enabled=0
+# enable key mapping, using US layout as default
+# keyboard_mapping: enabled=1,map=/usr/local/share/bochs/keymaps/x11-pc-us.map
+# clock: sync=slowdown,time0=local
