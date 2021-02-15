@@ -11,8 +11,8 @@ DA_DPL2		EQU	  0x40	;	0	0	0	0		0	10	0	0000
 DA_DPL3		EQU	  0x60	;	0	0	0	0		0	11	0	0000
 
 ; 以下7个常量P和S都为1，表示存在的代码数据段，TYPE取值不同
-DA_DR		EQU	  0x90	;	0	0	0	0		1	00	1	0000			TYPE都为0，只读代码段
-DA_DRW		EQU	  0x92	;	0	0	0	0		1	00	1	0010			W为1，读写代码段
+DA_DR		EQU	  0x90	;	0	0	0	0		1	00	1	0000			TYPE都为0，只读数据段
+DA_DRW		EQU	  0x92	;	0	0	0	0		1	00	1	0010			W为1，读写数据段
 DA_DRWA		EQU	  0x93	;	0	0	0	0		1	00	1	0011			W为1，A为1，已访问读写数据段
 DA_C		EQU	  0x98	;	0	0	0	0		1	00	1			1000	X为1，代码段
 DA_CR		EQU	  0x9A	;	0	0	0	0		1	00	1			1010	X、R为1，可读代码段
@@ -56,11 +56,11 @@ PG_USU		EQU	   0x4	; U/S 属性位值, 用户级
 ;        Limit: dd (low 20 bits available)
 ;        Attr:  dw (lower 4 bits of higher byte are always 0)
 %macro Descriptor 3
-	dw	%2 & 0FFFFh				; 段界限 1				(2 字节)
-	dw	%1 & 0FFFFh				; 段基址 1				(2 字节)
-	db	(%1 >> 16) & 0FFh			; 段基址 2				(1 字节)
-	dw	((%2 >> 8) & 0F00h) | (%3 & 0F0FFh)	; 属性 1 + 段界限 2 + 属性 2		(2 字节)
-	db	(%1 >> 24) & 0FFh			; 段基址 3				(1 字节)
+	dw	(%2) & 0xFFFF				; 段界限 1				(2 字节)
+	dw	(%1) & 0xFFFF				; 段基址 1				(2 字节)
+	db	((%1) >> 16) & 0xFF			; 段基址 2				(1 字节)
+	dw	(((%2) >> 8) & 0xF00) | ((%3) & 0F0FFh)	; 属性 1 + 段界限 2 + 属性 2		(2 字节)
+	db	((%1) >> 24) & 0xFF			; 段基址 3				(1 字节)
 %endmacro ; 共 8 字节
 ;
 ; 门
@@ -70,10 +70,10 @@ PG_USU		EQU	   0x4	; U/S 属性位值, 用户级
 ;        DCount:    db
 ;        Attr:      db
 %macro Gate 4
-	dw	(%2 & 0FFFFh)				; 偏移 1				(2 字节)
-	dw	%1					; 选择子				(2 字节)
-	dw	(%3 & 1Fh) | ((%4 << 8) & 0FF00h)	; 属性					(2 字节)
-	dw	((%2 >> 16) & 0FFFFh)			; 偏移 2				(2 字节)
+	dw	((%2) & 0xFFFF)							; 偏移 1				(2 字节)
+	dw	(%1)									; 选择子				(2 字节)
+	dw	((%3) & 0x1F) | (((%4) << 8) & 0xFF00)	; 属性					(2 字节)
+	dw	(((%2) >> 16) & 0xFFFF)					; 偏移 2				(2 字节)
 %endmacro ; 共 8 字节
 
 
