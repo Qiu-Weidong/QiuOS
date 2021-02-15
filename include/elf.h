@@ -1,5 +1,5 @@
-#ifndef ELF_H_
-#define ELF_H_
+#ifndef QIUOS_ELF_H_
+#define QIUOS_ELF_H_
 
 #define EI_NIDENT 16
 typedef unsigned int        Elf32_Addr;     // 无符号地址
@@ -54,4 +54,4 @@ typedef struct
     Elf32_Word      sh_addralign;   // 某些节区带有地址对齐约束.
     Elf32_Word      sh_entsize;     // 某些节区中包含固定大小的项目，如符号表。对于这类节区，此成员给出每个表项的长度字节数。
 } Elf32_Shdr;
-#endif // ELF_H_
+#endif // QIUOS_ELF_H_

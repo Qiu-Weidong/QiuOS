@@ -46,7 +46,7 @@ $(LOADER) : boot/loader.asm boot/include/const.inc boot/include/lib16.inc boot/i
 # $ gcc -m32 -c bar.c -o bar.o
 # $ ld -s -m elf_i386 foo.o bar.o -o foobar
 # build/kernel.o : ./kernel/kernel.asm ./include/const.h ./include/protect.h ./include/type.h
-build/kernel.o : kernel/main.c include/const.h include/protect.h include/type.h 
+build/kernel.o : kernel/main.c include/const.h include/type.h 
 	@echo "\033[49;36mBuild kernel\033[0m"
 	@$(CC) $(CFLAGS) -o $@ $<
 
