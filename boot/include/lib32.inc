@@ -204,6 +204,9 @@ memcpy:
     push esi
 
     mov ecx, [ebp+16]                       ; ecx -> n
+    test ecx, ecx
+    jz L1
+
     mov esi, [ebp+12]
     mov edi, [ebp+8]
     cld
@@ -211,7 +214,7 @@ mem_loop:
     lodsb
     stosb
     loop mem_loop
-
+L1:
     pop esi
     pop edi
     pop ecx

@@ -132,6 +132,7 @@ PM_START:
     mov es, ax
     mov ss, ax
     mov ds, ax
+    mov fs, ax
     mov esp, TopOfStack
 
 
@@ -191,7 +192,7 @@ Go_on_copy:
     mov eax, dword [edi+4]                      ; eax -> p_offset
     add eax, edx                                ; eax 为当前段在内存中的起始地址
     push dword [edi+16]                         ; push p_filesz
-    push eax
+    push eax                                    ; push 当前段在内存中的起始地址
     push dword [edi+8]                          ; push p_vaddr
     call memcpy
     add esp, 12
