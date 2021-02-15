@@ -52,7 +52,7 @@ Mkfile.old
 dkms.conf
 
 # img
-# *.img
+*.img
 
 # build
 build
