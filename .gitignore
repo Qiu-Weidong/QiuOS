@@ -63,5 +63,6 @@ hold
 debug.bat
 run.bat
 run.vbs
-
+# .vscode
+.vscode
 bochsout.txt

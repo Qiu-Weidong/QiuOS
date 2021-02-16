@@ -7,6 +7,7 @@ LD 			:= ld
 
 ASMFLAGS	:= -I ./boot/include/
 CFLAGS		:= -I include/ -m32 -c -fno-builtin
+LDFLAGS		:= -s -Ttext 0x100a0 -e kernel_main -m elf_i386
 
 IMG			:= QiuOS.img 
 BOOT 		:= build/boot.bin
@@ -34,29 +35,36 @@ $(IMG): $(BOOT) $(LOADER) $(KERNEL)
 	@sudo umount /mnt/floppy
 	@echo "\033[49;32mBuild Sucess ===> QiuOS.img\033[0m"
 
-$(BOOT) : boot/boot.asm boot/include/const.inc boot/include/lib16.inc
+$(BOOT) : boot/boot.asm boot/include/*
 	@echo "\033[49;34mBuild $(BOOT)\033[0m"
 	@$(ASM) $(ASMFLAGS) -o $@ $< 
 
-$(LOADER) : boot/loader.asm boot/include/const.inc boot/include/lib16.inc boot/include/pm.inc boot/include/lib32.inc boot/include/loader.inc
+$(LOADER) : boot/loader.asm boot/include/*
 	@echo "\033[49;33mBuild $(LOADER)\033[0m"
 	@$(ASM) $(ASMFLAGS) -o $@ $<
 
 # $ nasm -f elf foo.asm -o foo.o
 # $ gcc -m32 -c bar.c -o bar.o
 # $ ld -s -m elf_i386 foo.o bar.o -o foobar
-# build/kernel.o : ./kernel/kernel.asm ./include/const.h ./include/protect.h ./include/type.h
-build/kernel.o : kernel/main.c include/const.h include/type.h 
-	@echo "\033[49;36mBuild kernel\033[0m"
+build/kernel.o : kernel/kernel.c include/*
+	@echo "\033[49;35mBuild kernel\033[0m"
 	@$(CC) $(CFLAGS) -o $@ $<
 
-build/klib.o : lib/klib.asm 
-	@echo "\033[49;36mBuild klib\033[0m"
+build/interupt.o : kernel/interupt.c include/*
+	@echo "\033[49;38mBuild interupt\033[0m"
+	@$(CC) $(CFLAGS) -o $@ $<
+
+build/kliba.o : lib/kliba.asm 
+	@echo "\033[49;32mBuild kliba\033[0m"
 	@$(ASM) -f elf -o $@ $<
 
-$(KERNEL): build/kernel.o build/klib.o
+build/klibc.o: lib/klibc.c include/*
+	@echo "\033[49;37mBuild klibc\033[0m"
+	@$(CC) $(CFLAGS) -o $@ $<
+
+$(KERNEL): build/kernel.o build/kliba.o build/interupt.o build/klibc.o 
 	@echo "\033[49;35mLink kernel\033[0m"
-	@$(LD) -s -Ttext 0x100a0 -e kernel_main -m elf_i386 -o $@ $^
+	@$(LD) $(LDFLAGS) -o $@ $^
 
 clean:
 	@rm -rf $(BUILD) $(IMG)
