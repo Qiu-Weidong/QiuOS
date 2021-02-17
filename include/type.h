@@ -1,35 +1,39 @@
 #ifndef QIUOS_TYPE_H_
 #define QIUOS_TYPE_H_
 
+typedef unsigned char       uint8_t;
+typedef signed char         int8_t;
+typedef unsigned short      uint16_t;
+typedef signed short        int16_t;
+typedef unsigned int        uint32_t;
+typedef signed int          int32_t;
+typedef unsigned long long  uint64_t;
+typedef signed long long    int64_t;
 
-typedef unsigned char       u8;
-typedef unsigned short      u16;
-typedef unsigned int        u32;
-typedef unsigned long long  u64;
 typedef	void (*interrupt_handler)	();
 
 typedef struct 
 {
-    u16 back_link;                      // 上一个任务链接
-    u32 esp0;                           // 0特权级的栈指针
-    u16 ss0;                            // 0特权级的栈段描述符
-    u32 esp1;
-    u16 ss1;
-    u32 esp2;
-    u16 ss2;
-    u32 cr3;
-    u32 eip;
-    u32 eflags;
-    u32 eax, ecx, edx, ebx;
-    u32 esp, ebp, esi, edi;
-    u16 es;
-    u16 cs;
-    u16 ss;
-    u16 ds;
-    u16 fs;
-    u16 gs;
-    u16 ldt;
-    u16 trace, bitmap;
+    uint16_t back_link;                      // 上一个任务链接
+    uint32_t esp0;                           // 0特权级的栈指针
+    uint16_t ss0;                            // 0特权级的栈段描述符
+    uint32_t esp1;
+    uint16_t ss1;
+    uint32_t esp2;
+    uint16_t ss2;
+    uint32_t cr3;
+    uint32_t eip;
+    uint32_t eflags;
+    uint32_t eax, ecx, edx, ebx;
+    uint32_t esp, ebp, esi, edi;
+    uint16_t es;
+    uint16_t cs;
+    uint16_t ss;
+    uint16_t ds;
+    uint16_t fs;
+    uint16_t gs;
+    uint16_t ldt;
+    uint16_t trace, bitmap;
 }TSS;
 
 #endif // QIUOS_TYPE_H_

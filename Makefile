@@ -54,15 +54,15 @@ build/interrupt.o : kernel/interrupt.c include/*
 	@echo "\033[49;38mBuild interrupt\033[0m"
 	@$(CC) $(CFLAGS) -o $@ $<
 
-build/kliba.o : lib/kliba.asm 
-	@echo "\033[49;32mBuild kliba\033[0m"
-	@$(ASM) -f elf -o $@ $<
-
 build/klibc.o: lib/klibc.c include/*
 	@echo "\033[49;37mBuild klibc\033[0m"
 	@$(CC) $(CFLAGS) -o $@ $<
 
-$(KERNEL): build/kernel.o build/kliba.o build/interrupt.o build/klibc.o 
+build/io.o:lib/io.asm
+	@echo "\033[49;31mBuild io\033[0m"
+	@$(ASM) -f elf -o $@ $<
+
+$(KERNEL): build/kernel.o build/io.o
 	@echo "\033[49;35mLink kernel\033[0m"
 	@$(LD) $(LDFLAGS) -o $@ $^
 

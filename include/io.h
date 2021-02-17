@@ -4,7 +4,7 @@
 
 public void putchar(int c);
 public int puts(const char * str);
-public void putdec(int n);
+public void putdec(unsigned int n);
 public void puthex(int n);
 public void putoct(int n);
 public void putln();

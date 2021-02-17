@@ -6,7 +6,7 @@
 #include "const.h"
 #include "proto.h"
 
-extern u64 idt[IDT_SIZE];
+extern uint64_t idt[IDT_SIZE];
 
 private void init_8259A()
 {
@@ -82,12 +82,12 @@ public void init_idt()
     for(int i=0;i<IDT_SIZE;i++)
     {
         // 将selector设置为代码段选择子，将offset设置为函数地址
-        set_gate(idt+i,(u32)default_handler,(1 << 3) + SA_RPL0 + SA_TIG,0,DA_386IGate);
+        set_gate(idt+i,(uint32_t)default_handler,(1 << 3) + SA_RPL0 + SA_TIG,0,DA_386IGate);
     }
 
-    u8 idt_ptr[6];
-    *((u16 *)idt_ptr) = sizeof(idt) - 1;
-    *((u32 *)(idt_ptr+2)) = (u32)idt;
+    uint8_t idt_ptr[6];
+    *((uint16_t *)idt_ptr) = sizeof(idt) - 1;
+    *((uint32_t *)(idt_ptr+2)) = (uint32_t)idt;
     lidt(idt_ptr);
 }
 
