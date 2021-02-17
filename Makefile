@@ -6,7 +6,7 @@ CC			:= gcc
 LD 			:= ld
 
 ASMFLAGS	:= -I ./boot/include/
-CFLAGS		:= -I include/ -m32 -c -fno-builtin
+CFLAGS		:= -I include/ -m32 -c -fno-builtin -fno-stack-protector
 LDFLAGS		:= -s -Ttext 0x100a0 -e kernel_main -m elf_i386
 
 IMG			:= QiuOS.img 
@@ -50,8 +50,8 @@ build/kernel.o : kernel/kernel.c include/*
 	@echo "\033[49;35mBuild kernel\033[0m"
 	@$(CC) $(CFLAGS) -o $@ $<
 
-build/interupt.o : kernel/interupt.c include/*
-	@echo "\033[49;38mBuild interupt\033[0m"
+build/interrupt.o : kernel/interrupt.c include/*
+	@echo "\033[49;38mBuild interrupt\033[0m"
 	@$(CC) $(CFLAGS) -o $@ $<
 
 build/kliba.o : lib/kliba.asm 
@@ -62,7 +62,7 @@ build/klibc.o: lib/klibc.c include/*
 	@echo "\033[49;37mBuild klibc\033[0m"
 	@$(CC) $(CFLAGS) -o $@ $<
 
-$(KERNEL): build/kernel.o build/kliba.o build/interupt.o build/klibc.o 
+$(KERNEL): build/kernel.o build/kliba.o build/interrupt.o build/klibc.o 
 	@echo "\033[49;35mLink kernel\033[0m"
 	@$(LD) $(LDFLAGS) -o $@ $^
 

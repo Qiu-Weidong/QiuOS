@@ -2,6 +2,7 @@
 #define QIUOS_ELF_H_
 
 #define EI_NIDENT 16
+
 typedef unsigned int        Elf32_Addr;     // 无符号地址
 typedef unsigned short      Elf32_Half;     // 无符号段整数
 typedef unsigned int        Elf32_Off;      // 无符号文件偏移

@@ -13,5 +13,7 @@ int kernel_main()
     dis_color = HIGHLIGHT|FG_MAGENTA|BG_BLACK;
     puts("Welcome to QiuOS World!\n");
     init_kernel();
+    puts("ready!\n");
+    ud2();
     hlt();
 }
