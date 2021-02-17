@@ -1,6 +1,9 @@
 #ifndef QIUOS_TYPE_H_
 #define QIUOS_TYPE_H_
 
+#define true 1
+#define false 0
+typedef unsigned int        bool;
 typedef unsigned char       uint8_t;
 typedef signed char         int8_t;
 typedef unsigned short      uint16_t;

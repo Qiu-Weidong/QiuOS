@@ -11,6 +11,7 @@ global putoct
 global putln
 global getchar
 global getline
+global set_color
 
 ; gs指向显存
 ; void putchar(int c)
@@ -36,9 +37,14 @@ L7:
 ; gs指向显存
 ; int puts(const char * str)
 puts:
+    push ecx
+    push edi
+    push esi
+    push es
+
     xor ecx, ecx
     mov edi, [dis_pos]
-    mov esi, [esp+4]
+    mov esi, [esp+20]
     mov ax, gs
     mov es, ax
     mov ah, [dis_color]
@@ -48,13 +54,9 @@ L2:
     jz L1
     cmp al, 10                          ; 如果是\n,则换行
     jne L3
-    add edi, 160                        ; 换行
-    mov eax, edi
-    xor edx, edx
-    mov ebx, 160
-    div ebx                             ; edx -> 余数，eax -> 商
-    sub edi, edx
-    mov ah, [dis_color]
+    mov [dis_pos], edi
+    call putln
+    mov edi, [dis_pos]
     inc ecx
     jmp L2
 L3:
@@ -62,10 +64,13 @@ L3:
     inc ecx
     jmp L2
 L1:
-    mov ax, ds
-    mov es, ax
     mov [dis_pos], edi
     mov eax, ecx
+
+    pop es
+    pop esi
+    pop edi
+    pop ecx
     ret
 
 
@@ -180,4 +185,9 @@ L5:
     pop esi
     pop edx
     pop ecx
+    ret
+
+set_color:
+    mov al, byte [esp+4]
+    mov byte [dis_color],al
     ret

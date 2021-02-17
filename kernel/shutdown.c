@@ -6,7 +6,7 @@ public void shutdown()
 {
     const char msg[] = "Shutdown";
     puts("Power off...\n");
-    // ACPI power-off;
+    // ACPI power-off;这条指令执行后直接就关机了
     out_word(0xb004,0x2000);
     
     for(const char * p = msg; *p != '\0'; p++)
