@@ -5,6 +5,7 @@
 #include "asm.h"
 #include "const.h"
 #include "proto.h"
+#include "io.h"
 
 extern uint64_t idt[IDT_SIZE];
 
@@ -72,8 +73,9 @@ private void coproc_error();            // 16     #MF  x87FPU浮点错 Fault    
 private void align_check();             // 17     #AC  对齐检查     Fault       有(0)    内存中的数据访问
 private void machine_check();           // 18     #MC  Machine Check Abort     无  
 private void simd_exception();          // 19     #XF  SIMD浮点异常  Fault      无
-private void default_handler();         // 一个默认的异常处理程序
+public void default_handler();         // 一个默认的异常处理程序
 
+public void intr_stub();
 
 public void init_idt()
 {
@@ -82,7 +84,7 @@ public void init_idt()
     for(int i=0;i<IDT_SIZE;i++)
     {
         // 将selector设置为代码段选择子，将offset设置为函数地址
-        set_gate(idt+i,(uint32_t)default_handler,(1 << 3) + SA_RPL0 + SA_TIG,0,DA_386IGate);
+        idt[i] = make_intr_gate(intr_stub,(1 << 3) + SA_RPL0 + SA_TIG,0);
     }
 
     uint8_t idt_ptr[6];
@@ -91,7 +93,13 @@ public void init_idt()
     lidt(idt_ptr);
 }
 
-private void default_handler()
+public void default_handler()
 {
     puts("exception!\n");
+    // hlt();
+}
+public bool is_intr_on()
+{
+    uint32_t flags = get_eflags();
+    return flags & 0x20;
 }

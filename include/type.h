@@ -3,6 +3,7 @@
 
 #define true 1
 #define false 0
+
 typedef unsigned int        bool;
 typedef unsigned char       uint8_t;
 typedef signed char         int8_t;
@@ -13,7 +14,7 @@ typedef signed int          int32_t;
 typedef unsigned long long  uint64_t;
 typedef signed long long    int64_t;
 
-typedef	void (*interrupt_handler)	();
+typedef	void (*function)	();
 
 typedef struct 
 {

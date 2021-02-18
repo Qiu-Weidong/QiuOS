@@ -5,7 +5,7 @@
 
 public uint8_t set_color(unsigned char color);
 public void putchar(int c);
-public int puts(const char * str);
+public unsigned int puts(const char * str);
 public void putdec(unsigned int n);
 public void puthex(int n);
 public void putoct(int n);

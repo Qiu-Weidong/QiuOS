@@ -3,7 +3,7 @@
 #include "io.h"
 
 
-public void shutdown();
+public void shutdown() NO_RETURN;
 public void reboot();
 
 

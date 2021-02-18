@@ -11,9 +11,3 @@ public void panic(const char * msg)
     set_color(old_color);
     hlt();
 }
-
-// public void assert(bool condition)
-// {
-//     if(!condition)
-//         panic("assert fail!");
-// }

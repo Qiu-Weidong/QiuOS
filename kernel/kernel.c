@@ -4,6 +4,7 @@
 #include "io.h"
 #include "shutdown.h"
 #include "panic.h"
+#include "proto.h"
 
 
 uint32_t dis_pos = 2400;             // 从第15行开始显示
@@ -14,8 +15,9 @@ uint64_t idt[IDT_SIZE];              // idt表
 int kernel_main()
 {
     set_color(HIGHLIGHT|FG_YELLOW|BG_BLACK);
+    init_kernel();
     puts("Welcome to QiuOS World!\n");
-    // shutdown();
-    assert(1==2);
+    if(!is_intr_on()) sti();
+    int(32);
     hlt();
 }

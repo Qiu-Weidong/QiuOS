@@ -67,10 +67,14 @@ build/shutdown.o:kernel/shutdown.c include/*
 	@$(CC) $(CFLAGS) -o $@ $<
 
 build/panic.o : kernel/panic.c include/*
-	@echo "\033[49;36mBuild shutdown\033[0m"
+	@echo "\033[49;36mBuild panic\033[0m"
 	@$(CC) $(CFLAGS) -o $@ $<
 
-$(KERNEL): build/kernel.o build/io.o build/shutdown.o build/panic.o 
+build/intr_stub.o: kernel/intr-stub.asm
+	@echo "\033[49;38mBuild intr_stub\033[0m"
+	@$(ASM) -f elf -o $@ $<
+
+$(KERNEL): build/kernel.o build/io.o build/shutdown.o build/panic.o build/klibc.o build/interrupt.o build/intr_stub.o
 	@echo "\033[49;35mLink kernel\033[0m"
 	@$(LD) $(LDFLAGS) -o $@ $^
 

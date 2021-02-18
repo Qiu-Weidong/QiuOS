@@ -3,11 +3,6 @@
 #include "const.h"
 #include "type.h"
 
-public void panic(const char * msg);
-// public void assert(bool condition);
-#define assert(condition)                          \
-    if(!(condition)){                               \
-        panic(#condition);                          \
-    }                                               
+public void panic(const char * msg);                                          
 
 #endif // QIUOS_EXCEPTION_H_

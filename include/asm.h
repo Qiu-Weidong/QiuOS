@@ -16,8 +16,8 @@
 #define int(n) __asm__ volatile("int %0"::"g"(n))
 #define wait() __asm__ volatile("wait"::)
 #define fwait() __asm__ volatile("fwait"::)
-#define pushf() __asm__ volatile("pushf"::)
-#define popf() __asm__ volatile("popf"::)
+#define pushf() __asm__ volatile("pushfl"::)
+#define popf() __asm__ volatile("popfl"::)
 #define pushb(value) __asm__ volatile("pushb %0"::"g"(value))
 #define pushw(value) __asm__ volatile("pushw %0"::"g"(value))
 #define pushl(value) __asm__ volatile("pushl %0"::"g"(value))
@@ -79,5 +79,13 @@
 #define set_fs(value) __asm__ volatile("movw %0, %%fs"::"a"(value))
 #define set_gs(value) __asm__ volatile("movw %0, %%gs"::"a"(value))
 #define set_ss(value) __asm__ volatile("movw %0, %%ss"::"a"(value))
+
+#define get_eflags() ({                                         \
+    unsigned int _v;                                            \
+    __asm__ volatile("pushfl; popl %0":"=g"(_v):);              \
+    _v;                                                         \
+})
+
+#define set_eflags(flags) __asm__ volatile("pushl %0; popf"::"g"(flags))  
 
 #endif // QIUOS_ASM_H_
