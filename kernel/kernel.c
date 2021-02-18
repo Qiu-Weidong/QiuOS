@@ -17,7 +17,7 @@ int kernel_main()
     init_kernel();
     puts("Welcome to QiuOS World!\n");
     if (!is_intr_on())
-        sti();
-    int3();
+        sti();                               // 这里开了中断，把时钟中断给捕获了
+    shutdown();
     hlt();
 }

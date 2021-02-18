@@ -11,6 +11,13 @@ extern uint64_t idt[IDT_SIZE];
 
 private void init_8259A()
 {
+    out_byte(INT_MASTER_MASK, 0xff);
+    nop();
+    nop();
+
+    out_byte(INT_SLAVE_MASK, 0xff);
+    nop();
+    nop();
 
     out_byte(INT_MASTER_CONTROLLER, 0x11);
     nop();
@@ -44,7 +51,7 @@ private void init_8259A()
     nop();
     nop(); 
 
-    out_byte(INT_MASTER_MASK, 0xfc);
+    out_byte(INT_MASTER_MASK, 0xff);
     nop();
     nop();
 
@@ -91,6 +98,7 @@ public void init_idt()
     *((uint16_t *)idt_ptr) = sizeof(idt) - 1;
     *((uint32_t *)(idt_ptr+2)) = (uint32_t)idt;
     lidt(idt_ptr);
+    return ;
 }
 
 public void default_handler()
