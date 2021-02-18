@@ -96,7 +96,7 @@ public void init_idt()
 public void default_handler()
 {
     puts("exception!\n");
-    // hlt();
+    hlt();
 }
 public bool is_intr_on()
 {

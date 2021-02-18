@@ -6,8 +6,8 @@ CC			:= gcc
 LD 			:= ld
 
 ASMFLAGS	:= -I ./boot/include/
-CFLAGS		:= -I include/ -m32 -c -fno-builtin -fno-stack-protector
-LDFLAGS		:= -s -Ttext 0x100a0 -e kernel_main -m elf_i386
+CFLAGS		:= -I include/ -m32 -c -fno-builtin -fno-stack-protector -g 
+LDFLAGS		:= -Ttext 0x100a0 -e kernel_main -m elf_i386
 
 IMG			:= QiuOS.img 
 BOOT 		:= build/boot.bin
