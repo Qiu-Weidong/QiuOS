@@ -22,11 +22,11 @@ void *memcpy(void *dest, const void *src, size_t size);
 /// @param size 复制的字节数
 /// @return dest
 //////////////////////////////////////////////////////
-public 
+public
 void *memmove(void *dest, const void *src, size_t size);
 
-public 
-int memcmp(const void * a, const void * b, size_t size);
+public
+int memcmp(const void *a, const void *b, size_t size);
 
 //////////////////////////////////////////////////////
 /// @brief 将dest指向的内存中的size字节设置为value
@@ -53,7 +53,7 @@ size_t strlen(char *str);
 /// @param maxlen 最大长度
 /// @return str的长度或maxlen
 //////////////////////////////////////////////////////
-public 
+public
 size_t strnlen(char *str, size_t maxlen);
 
 //////////////////////////////////////////////////////
@@ -144,8 +144,8 @@ char *strrchr(char *str, char c);
 /// @param size 最多访问的字符
 /// @return 字符出现的位置，没有则为NULL
 //////////////////////////////////////////////////////
-public 
-char *strnchr(char *str,char c,size_t size);
+public
+char *strnchr(char *str, char c, size_t size);
 
 //////////////////////////////////////////////////////
 /// @brief 寻找字串在字符串中首先出现的位置
@@ -157,6 +157,6 @@ public
 char *strstr(char *str, const char *substr);
 
 public
-char *strtok_r(char * str, const char * delim, char ** saveptr);
+char *strtok_r(char *str, const char *delim, char **saveptr);
 
 #endif // QIUOS_STRING_H_

@@ -1,12 +1,12 @@
 # Makefile for QiuOS
 
 # 编译、链接、调试和运行程序
-ASM			:= nasm
-CC			:= gcc
-LD 			:= ld
-DEBUG 		:= gdb
-BOCHS 		:= bochs
-BXIMG 		:= bximage
+ASM 		:= nasm
+CC  		:= gcc
+LD  		:= ld
+DEBUG		:= gdb
+BOCHS		:= bochs
+BXIMG		:= bximage
 
 # 参数
 BOOTFLAGS	:= -I ./boot/include/
@@ -33,7 +33,7 @@ ASMSOURCE	:= $(notdir $(wildcard kernel/*.asm lib/*.asm))
 OBJS		:= $(addprefix $(BUILD)/,$(CSOURCE:.c=.o) $(ASMSOURCE:.asm=.o))
 
 # 目标文件
-IMG			:= QiuOS.img 
+IMG 		:= QiuOS.img 
 BOOT 		:= $(BUILD)/boot.bin
 LOADER 		:= $(BUILD)/loader.bin
 KERNEL		:= $(BUILD)/kernel.bin

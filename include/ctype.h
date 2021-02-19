@@ -1,7 +1,7 @@
 #ifndef QIUOS_CTYPE_H_
 #define QIUOS_CTYPE_H_
 
-#define isalnum(c) 
+#define isalnum(c)
 #define isalpha(c)
 #define iscntrl(c)
 #define isdigit(c)
