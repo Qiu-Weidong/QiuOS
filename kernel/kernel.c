@@ -16,8 +16,6 @@ int kernel_main()
     set_color(HIGHLIGHT | FG_YELLOW | BG_BLACK);
     init_kernel();
     puts("Welcome to QiuOS World!\n");
-    if (!is_intr_on())
-        sti();                               // 这里开了中断，把时钟中断给捕获了
+    set_color(HIGHLIGHT | FG_RED);
     shutdown();
-    hlt();
 }

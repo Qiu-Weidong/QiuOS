@@ -11,12 +11,15 @@ BXIMG		:= bximage
 # 参数
 BOOTFLAGS	:= -I ./boot/include/
 ASMFLAGS	:= -f elf -g -F DWARF
-CFLAGS		:= -I include/ -m32 -c -fno-builtin -fno-stack-protector -g 
+CFLAGS		:= -I include/ -m32 -c -fno-builtin -fno-stack-protector -g
 LDFLAGS		:= -Ttext 0x10400 -e kernel_main -m elf_i386
 GDBFLAGS	:= -tui -q  -ex "target remote localhost:1234"
 
 # 目标文件夹
 BUILD 		:= build
+
+# 挂载目录
+MNTDIR		:= /mnt/floppy
 
 # 配置文件
 BOCHSRC 	:= bochsrc
@@ -53,10 +56,10 @@ $(IMG):$(BUILD) $(BOOT) $(LOADER) $(KERNEL)
 	rm -rf *.img
 	$(BXIMG) $@ -q -mode=create -fd=1.44M >/dev/null
 	dd if=$(BOOT) of=$@ bs=512 count=1 conv=notrunc >/dev/null 2>/dev/null
-	sudo mount $@ /mnt/floppy -t vfat -o loop
-	sudo cp $(LOADER) $(KERNEL) /mnt/floppy -v >/dev/null
+	sudo mount $@ $(MNTDIR) -t vfat -o loop
+	sudo cp $(LOADER) $(KERNEL) $(MNTDIR) -v >/dev/null
 	sudo sync
-	sudo umount /mnt/floppy
+	sudo umount $(MNTDIR)
 	@echo "\033[49;32mBuild Sucess ===> $@\033[0m"
 
 $(BOOT) : boot/boot.asm boot/include/*
