@@ -1,26 +1,24 @@
 ###############################
-# Configuration file for Bochs
+# Bochs的配置文件
 ###############################
 
-# how much memory the emulated machine will have
+# 模拟器的内存
 megs: 32
 
-# filename of ROM images
 romimage:file="/usr/local/share/bochs/BIOS-bochs-latest"
 vgaromimage:file="/usr/local/share/bochs/VGABIOS-lgpl-latest"
 
-# what disk images will be used
+# 使用磁盘
 floppya:1_44=QiuOS.img, status=inserted
 
-# choose the boot disk
+# 启动盘
 boot: floppy 
 
-# where do we send log message 
+# 日志文件
 log: bochsout.txt
-# disable the mouse
 
+# 是否使用鼠标
 mouse: enabled=0
-# enable key mapping, using US layout as default
-# keyboard_mapping: enabled=1,map=/usr/local/share/bochs/keymaps/x11-pc-us.map
-# clock: sync=slowdown,time0=local
+
+# 使用gdbstub进行调试
 gdbstub:enabled=1,port=1234,text_base=0,data_base=0,bss_base=0
