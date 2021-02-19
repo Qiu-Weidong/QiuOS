@@ -69,7 +69,7 @@ uint64_t make_task_gate(uint16_t selector, uint8_t dpl)
 }
 
 private
-void init_gdt()
+void init_gdt() 
 {
     gdt[0] = make_desc(0,0,0);
     gdt[1] = make_seg_desc(0,0xfffff,DA_DPL0 | DA_CR | DA_32 | DA_LIMIT_4K);
@@ -77,8 +77,8 @@ void init_gdt()
     gdt[3] = make_seg_desc(0xb8000, 0xffff,DA_DRW|DA_DPL3);
 
     uint8_t gdt_ptr[6];
-    *((uint16_t *)gdt_ptr) = 4 * 8 - 1;
-    *((uint32_t *)(gdt_ptr + 2)) = (uint32_t)gdt;
+    *((uint16_t volatile*)gdt_ptr) = 4 * 8 - 1;
+    *((uint32_t volatile*)(gdt_ptr + 2)) = (uint32_t)gdt;
     lgdt(gdt_ptr);
 }
 

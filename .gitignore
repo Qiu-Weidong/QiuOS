@@ -65,4 +65,4 @@ run.bat
 run.vbs
 # .vscode
 .vscode
-bochsout.txt
+*.txt

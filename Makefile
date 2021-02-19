@@ -11,9 +11,11 @@ BXIMG		:= bximage
 # 参数
 BOOTFLAGS	:= -I ./boot/include/
 ASMFLAGS	:= -f elf -g -F DWARF
-CFLAGS		:= -I include/ -m32 -c -fno-builtin -fno-stack-protector -g
+CFLAGS		:= -I include/ -m32 -c -fno-builtin -fno-stack-protector -g 
 LDFLAGS		:= -Ttext 0x10400 -e kernel_main -m elf_i386
-GDBFLAGS	:= -tui -q  -ex "target remote localhost:1234"
+GDBFLAGS	:= -tui -q  -ex "target remote localhost:1234" -ex "set disassembly-flavor intel" \
+			   -ex "set logging on"
+SILENT		:= >/dev/null 2>/dev/null
 
 # 目标文件夹
 BUILD 		:= build
@@ -45,7 +47,7 @@ KERNEL		:= $(BUILD)/kernel.bin
 
 
 # 伪目标
-.PHONY:all clean rebuild run debug
+.PHONY:all clean rebuild debug 
 
 all:  $(IMG) 
 
@@ -54,10 +56,10 @@ $(BUILD):
 
 $(IMG):$(BUILD) $(BOOT) $(LOADER) $(KERNEL)
 	rm -rf *.img
-	$(BXIMG) $@ -q -mode=create -fd=1.44M >/dev/null
-	dd if=$(BOOT) of=$@ bs=512 count=1 conv=notrunc >/dev/null 2>/dev/null
+	$(BXIMG) $@ -q -mode=create -fd=1.44M $(SILENT)
+	dd if=$(BOOT) of=$@ bs=512 count=1 conv=notrunc $(SILENT)
 	sudo mount $@ $(MNTDIR) -t vfat -o loop
-	sudo cp $(LOADER) $(KERNEL) $(MNTDIR) -v >/dev/null
+	sudo cp $(LOADER) $(KERNEL) $(MNTDIR) -v $(SILENT)
 	sudo sync
 	sudo umount $(MNTDIR)
 	@echo "\033[49;32mBuild Sucess ===> $@\033[0m"
@@ -84,8 +86,6 @@ rebuild:clean all
 
 # 请确保bochsrc文件中最后一行gdbstub:enabled=1 ... 被取消注释
 debug:$(IMG) $(KERNEL)
+	@$(BOCHS) -f $(BOCHSRC) -q $(SILENT)  &
 	@$(DEBUG) $(GDBFLAGS) $(KERNEL)
-
-run:$(IMG) $(BOCHSRC)
-	@$(BOCHS) -f $(BOCHSRC) -q 
 

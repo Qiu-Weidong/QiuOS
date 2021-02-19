@@ -136,8 +136,8 @@ void init_idt()
     idt[INT_VECTOR_STACK_EXCEPTION] = make_trap_gate(stack_exception_stub, cs_selector, 0);
 
     uint8_t idt_ptr[6];
-    *((uint16_t *)idt_ptr) = sizeof(idt) - 1;
-    *((uint32_t *)(idt_ptr + 2)) = (uint32_t)idt;
+    *((uint16_t volatile *)idt_ptr) = sizeof(idt) - 1;
+    *((uint32_t volatile *)(idt_ptr + 2)) = (uint32_t)idt;
     lidt(idt_ptr);
     return;
 }
@@ -269,7 +269,7 @@ void invalid_opcode(uint32_t eip, uint16_t cs, uint32_t eflags)
     puts("EIP:");
     puthex(eip);
     putln();
-    // hlt();
+    hlt();
     // fault 会再次执行
 }
 void coproc_not_available(uint32_t eip, uint16_t cs, uint32_t eflags)
