@@ -2,12 +2,13 @@
  * 中断相关处理函数
 */
 
-#include "asm.h"
-#include "const.h"
 #include "proto.h"
 #include "io.h"
+#include "interrupt.h"
+#include "asm.h"
+#include "const.h"
 
-extern uint64_t idt[IDT_SIZE];
+uint64_t idt[IDT_SIZE];
 
 private
 void init_8259A()
@@ -105,11 +106,11 @@ void machine_check_stub();
 void simd_exception_stub();
 
 public
-void init_idt()
+void idt_init()
 {
     // 先初始化8259A
     init_8259A();
-    const uint16_t cs_selector = (1 << 3) + SA_RPL0 + SA_TIG;
+    const selector_t cs_selector = (1 << 3) + SA_RPL0 + SA_TIG;
 
     for (int i = 0; i < IDT_SIZE; i++)
         // 将selector设置为代码段选择子，将offset设置为函数地址
@@ -135,15 +136,14 @@ void init_idt()
     idt[INT_VECTOR_SINGLE_STEP_EXCEPTION] = make_trap_gate(single_step_exception_stub, cs_selector, 0);
     idt[INT_VECTOR_STACK_EXCEPTION] = make_trap_gate(stack_exception_stub, cs_selector, 0);
 
-    uint8_t idt_ptr[6];
+    uint16_t idt_ptr[3];
     *((uint16_t volatile *)idt_ptr) = sizeof(idt) - 1;
-    *((uint32_t volatile *)(idt_ptr + 2)) = (uint32_t)idt;
+    *((uint32_t volatile *)(idt_ptr + 1)) = (uint32_t)idt;
     lidt(idt_ptr);
-    return;
 }
 
 public
-bool is_intr_on()
+bool_t is_intr_on()
 {
     uint32_t flags = get_eflags();
     return flags & 0x20;

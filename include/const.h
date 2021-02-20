@@ -1,17 +1,10 @@
 #ifndef QIUOS_CONST_H_
-
 #define QIUOS_CONST_H_
-
-#define public
-#define private static
 
 #define NULL ((void *)0)
 #define NO_RETURN __attribute__ ((noreturn))
 #define UNUSED __attribute__ ((unused))
 #define NO_OPTIMIZE __attribute__((optimize("O0")))
-
-#define GDT_SIZE 128
-#define IDT_SIZE 256
 
 // 显示颜色相关
 // BL R G B I R G B

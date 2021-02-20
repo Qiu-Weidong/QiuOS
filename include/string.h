@@ -1,6 +1,5 @@
 #ifndef QIUOS_STRING_H_
 #define QIUOS_STRING_H_
-#include "const.h"
 #include "type.h"
 
 //////////////////////////////////////////////////////

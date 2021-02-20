@@ -1,5 +1,16 @@
 #ifndef QIUOS_STDLIB_H_
 #define QIUOS_STDLIB_H_
+#include "type.h"
+
+public
+int atoi(const char *);
+
+public 
+void *qsort(void * array, size_t cnt, size_t size,compare cmp);
+
+public
+void * bsearch(const void * key, const void * array, size_t cnt, size_t size,int (*copmare)(const void *,const void *,void *aux),void *aux);
+
 
 
 #endif // QIUOS_STDLIB_H_

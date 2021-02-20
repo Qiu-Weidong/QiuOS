@@ -52,8 +52,9 @@
 
 #define lgdt(gdt_ptr) __asm__ volatile("lgdt (%0)" ::"g"(gdt_ptr))
 #define lidt(idt_ptr) __asm__ volatile("lidt (%0)" ::"g"(idt_ptr))
-#define ltr(tss_ptr) __asm__ volatile("ltr  (%0)" ::"r"(tss_ptr))
-#define lldt(ldt_ptr) __asm__ volatile("lldt (%0)" ::"r"(ldt_ptr))
+#define ltr(tss_ptr) __asm__ volatile("ltr  %w0" ::"r"(tss_ptr))
+#define lldt(ldt_ptr) __asm__ volatile("lldt %w0" ::"r"(ldt_ptr))
+#define sgdt(gdt_ptr) __asm__ volatile("sgdt (%0)" ::"g"(gdt_ptr))
 
 #define get_ds() ({                    \
     unsigned short _v;                 \

@@ -188,6 +188,7 @@ L5:
     ret
 
 set_color:
-    mov al, byte [esp+4]
-    mov byte [dis_color],al
+    mov dl, byte [esp+4]
+    mov al, byte [dis_color]
+    mov byte [dis_color],dl
     ret

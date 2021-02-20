@@ -1,6 +1,5 @@
 #ifndef QIUOS_IO_H_
 #define QIUOS_IO_H_
-#include "const.h"
 #include "type.h"
 
 public

@@ -11,10 +11,12 @@ BXIMG		:= bximage
 # 参数
 BOOTFLAGS	:= -I ./boot/include/
 ASMFLAGS	:= -f elf -g -F DWARF
-CFLAGS		:= -I include/ -m32 -c -fno-builtin -fno-stack-protector -g 
+CFLAGS		:= -I include/ -m32 -c -fno-builtin -fno-stack-protector -g -O2
 LDFLAGS		:= -Ttext 0x10400 -e kernel_main -m elf_i386
-GDBFLAGS	:= -tui -q  -ex "target remote localhost:1234" -ex "set disassembly-flavor intel" \
-			   -ex "set logging on"
+GDBFLAGS	:= -q -ex "target remote localhost:1234" 		\
+						-ex "set disassembly-flavor intel" 	\
+						-ex "set logging on"				\
+						-ex "set disassemble-next-line on"
 SILENT		:= >/dev/null 2>/dev/null
 
 # 目标文件夹
@@ -86,6 +88,7 @@ rebuild:clean all
 
 # 请确保bochsrc文件中最后一行gdbstub:enabled=1 ... 被取消注释
 debug:$(IMG) $(KERNEL)
-	@$(BOCHS) -f $(BOCHSRC) -q $(SILENT)  &
+	@rm *.txt
+	@$(BOCHS) -f $(BOCHSRC) -q 2>bochsout.txt >/dev/null  &
 	@$(DEBUG) $(GDBFLAGS) $(KERNEL)
 
