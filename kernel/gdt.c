@@ -41,3 +41,5 @@ selector_t push_desc(uint64_t *gdt, uint64_t desc)
     uint8_t dpl = (desc >> 45) & 0x3;
     return (i << 3) + dpl + SA_TIG;
 }
+
+
