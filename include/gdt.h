@@ -24,10 +24,15 @@
 /// @brief 向gdt中添加描述符，并返回添加的选择子，其RPL等于添加的描述符的dpl
 //////////////////////////////////////////////////
 public 
-selector_t push_desc(uint64_t * gdt,uint64_t desc);
+selector_t gdt_push_back(uint64_t * gdt,uint64_t desc);
+
+public 
+void gdt_remove_back(uint64_t * gdt);
 
 public 
 void gdt_init();
 
+public 
+size_t gdt_size();
 
 #endif // QIUOS_GDT_H_

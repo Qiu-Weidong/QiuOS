@@ -27,8 +27,6 @@ typedef struct
     uint16_t trace, bitmap;
 }task_state_segment;
 
-// public 
-// void tss_init();
 
 
 #endif // QIUOS_TSS_H_

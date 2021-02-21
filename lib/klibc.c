@@ -4,9 +4,6 @@
 #include "interrupt.h"
 #include "const.h"
 
-extern uint64_t gdt[GDT_SIZE];
-extern uint64_t idt[IDT_SIZE];
-
 public
 uint64_t make_desc(uint32_t base, uint32_t limit, uint16_t attr)
 {

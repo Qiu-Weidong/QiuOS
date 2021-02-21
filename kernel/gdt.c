@@ -16,8 +16,9 @@ void gdt_init()
     gdt[INDEX_VIDEO] = make_seg_desc(0xb8000, 0xffff, DA_DRW | DA_DPL3);
     gdt[INDEX_KERNEL_TSS] = make_tss_desc((uint32_t)(&kernel_tss),sizeof(kernel_tss)-1,DA_DPL0);
 
+    gdt[5] = gdt[INDEX_FLAT_C];
     uint16_t gdt_ptr[3];
-    *((uint16_t volatile *)gdt_ptr) = 5 * 8 - 1;
+    *((uint16_t volatile *)gdt_ptr) = 6 * 8 - 1;
     *((uint32_t volatile *)(gdt_ptr + 1)) = (uint32_t)gdt;
     lgdt(gdt_ptr);
 
@@ -30,7 +31,7 @@ void gdt_init()
 }
 
 public
-selector_t push_desc(uint64_t *gdt, uint64_t desc)
+selector_t gdt_push_back(uint64_t *gdt, uint64_t desc)
 {
     uint16_t gdt_ptr[3];
     sgdt(gdt_ptr);

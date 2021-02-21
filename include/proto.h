@@ -22,7 +22,4 @@ uint64_t make_intr_gate(intr_stub func, selector_t selector, uint8_t dpl);
 public
 uint64_t make_task_gate(selector_t selector, uint8_t dpl);
 
-// public
-// void init_kernel();
-
 #endif // QIUOS_PROTO_H_

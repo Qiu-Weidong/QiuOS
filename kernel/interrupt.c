@@ -53,7 +53,7 @@ void init_8259A()
     nop();
     nop();
 
-    out_byte(INT_MASTER_MASK, 0xff);
+    out_byte(INT_MASTER_MASK, 0xfc);
     nop();
     nop();
 
@@ -83,6 +83,7 @@ void machine_check(uint32_t eip, uint16_t cs, uint32_t eflags); // 18     #MC  M
 void simd_exception(uint32_t eip, uint16_t cs, uint32_t eflags); // 19     #XF  SIMD浮点异常  Fault      无
 void default_handler(uint32_t eip, uint16_t cs, uint32_t eflags); // 一个默认的异常处理程序
 
+void clock_handler(uint32_t eip, uint16_t cs, uint32_t eflags);
 // 中断桩
 void default_handler_stub();
 void divide_error_stub();
@@ -104,6 +105,9 @@ void coproc_error_stub();
 void align_check_stub();
 void machine_check_stub();
 void simd_exception_stub();
+
+void clock_intr_stub();
+
 
 public
 void idt_init()
@@ -135,6 +139,8 @@ void idt_init()
     idt[INT_VECTOR_SIMD_EXCEPTION] = make_trap_gate(simd_exception_stub, cs_selector, 0);
     idt[INT_VECTOR_SINGLE_STEP_EXCEPTION] = make_trap_gate(single_step_exception_stub, cs_selector, 0);
     idt[INT_VECTOR_STACK_EXCEPTION] = make_trap_gate(stack_exception_stub, cs_selector, 0);
+
+    idt[INT_VECTOR_IRQ0] = make_intr_gate(clock_intr_stub,cs_selector,0);
 
     uint16_t idt_ptr[3];
     *((uint16_t volatile *)idt_ptr) = sizeof(idt) - 1;
@@ -465,4 +471,10 @@ void simd_exception(uint32_t eip, uint16_t cs, uint32_t eflags)
     puthex(eip);
     putln();
     hlt();
+}
+
+
+void clock_handler(uint32_t eip, uint16_t cs, uint32_t eflags)
+{
+    // puts("clock!");
 }

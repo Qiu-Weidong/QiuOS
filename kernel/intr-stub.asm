@@ -19,7 +19,8 @@ extern coproc_error
 extern align_check
 extern machine_check
 extern simd_exception
-
+; 外中断
+extern clock_handler
 
 [section .text]
 global default_handler_stub
@@ -43,6 +44,9 @@ global coproc_error_stub
 global align_check_stub
 global machine_check_stub
 global simd_exception_stub
+
+; 8259A外中断
+global clock_intr_stub
 
 ; fault会重新执行产生异常的指令，而trap不会
 default_handler_stub:
@@ -112,3 +116,9 @@ machine_check_stub:
 simd_exception_stub:
     call simd_exception
     iret
+clock_intr_stub:
+    call clock_handler
+    mov al, 0x20
+    out 0x20, al
+    iret
+
