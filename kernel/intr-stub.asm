@@ -21,6 +21,7 @@ extern machine_check
 extern simd_exception
 ; 外中断
 extern clock_handler
+extern kerboard_handler
 
 [section .text]
 global default_handler_stub
@@ -47,6 +48,7 @@ global simd_exception_stub
 
 ; 8259A外中断
 global clock_intr_stub
+global keyboard_intr_stub
 
 ; fault会重新执行产生异常的指令，而trap不会
 default_handler_stub:
@@ -121,4 +123,8 @@ clock_intr_stub:
     mov al, 0x20
     out 0x20, al
     iret
-
+keyboard_intr_stub:
+    call kerboard_handler
+    mov al, 0x20
+    out 0x20, al
+    iret

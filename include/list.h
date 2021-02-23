@@ -4,7 +4,7 @@
 
 typedef struct s_list_elem
 {
-    struct s_list_elem *prex;
+    struct s_list_elem *prev;
     struct s_list_elem *next;
 } list_elem;
 
@@ -27,14 +27,14 @@ public
 list_elem * list_end(list * list);
 
 public 
-list_elem * list_next(list * list);
+list_elem * list_next(list_elem * elem);
 
 public 
 list_elem * list_rbegin(list * list);
 public 
 list_elem * list_rend(list * list);
 public 
-list_elem * list_prev(list * list);
+list_elem * list_prev(list_elem * elem);
 
 public 
 list_elem * list_head(list * list);
@@ -48,7 +48,7 @@ list_elem * list_push_back(list * list, list_elem * elem);
 public 
 list_elem * list_push_front(list * list, list_elem * elem);
 public
-list_elem * list_remove(list * list, list_elem * elem);
+list_elem * list_remove(list_elem * elem);
 
 public 
 list_elem * list_pop_front(list * list);
@@ -56,5 +56,17 @@ public
 list_elem * list_pop_back(list * list);
 public 
 size_t list_size(list * list);
+
+public 
+list_elem * list_splice (list_elem *before,
+            list_elem *first, list_elem *last);
+public
+list_elem * list_front(list * list);
+public 
+list_elem * list_back(list * list);
+
+public 
+bool_t list_empty(list * list);
+
 
 #endif // QIUOS_LIST_H_

@@ -53,7 +53,7 @@ void init_8259A()
     nop();
     nop();
 
-    out_byte(INT_MASTER_MASK, 0xfc);
+    out_byte(INT_MASTER_MASK, 0xfd);
     nop();
     nop();
 
@@ -84,6 +84,7 @@ void simd_exception(uint32_t eip, uint16_t cs, uint32_t eflags); // 19     #XF  
 void default_handler(uint32_t eip, uint16_t cs, uint32_t eflags); // 一个默认的异常处理程序
 
 void clock_handler(uint32_t eip, uint16_t cs, uint32_t eflags);
+void keyboard_handler(uint32_t eip, uint16_t cs, uint32_t eflags);
 // 中断桩
 void default_handler_stub();
 void divide_error_stub();
@@ -107,7 +108,7 @@ void machine_check_stub();
 void simd_exception_stub();
 
 void clock_intr_stub();
-
+void keyboard_intr_stub();
 
 public
 void idt_init()
@@ -141,6 +142,7 @@ void idt_init()
     idt[INT_VECTOR_STACK_EXCEPTION] = make_trap_gate(stack_exception_stub, cs_selector, 0);
 
     idt[INT_VECTOR_IRQ0] = make_intr_gate(clock_intr_stub,cs_selector,0);
+    idt[INT_VECTOR_IRQ0+1] = make_intr_gate(keyboard_intr_stub,cs_selector,0);
 
     uint16_t idt_ptr[3];
     *((uint16_t volatile *)idt_ptr) = sizeof(idt) - 1;
@@ -476,5 +478,11 @@ void simd_exception(uint32_t eip, uint16_t cs, uint32_t eflags)
 
 void clock_handler(uint32_t eip, uint16_t cs, uint32_t eflags)
 {
-    // puts("clock!");
+    
+}
+void kerboard_handler(uint32_t eip, uint16_t cs, uint32_t eflags)
+{
+    uint8_t scan_code = in_byte(0x60);
+    puthex(scan_code);
+    putchar(' ');
 }
