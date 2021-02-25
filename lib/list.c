@@ -3,7 +3,7 @@
 public 
 void list_init(list * list)
 {
-    if(list == NULL) return; // 暂时先这样，等assert完善后再修改
+    // if(list == NULL) return; // 暂时先这样，等assert完善后再修改
     list->head.next = &list->tail;
     list->head.prev = NULL;
     list->tail.next = NULL;
@@ -73,7 +73,7 @@ public
 list_elem * list_splice (list_elem *before,
             list_elem *first, list_elem *last)
 {
-    if(first == last) return;
+    if(first == last) return first;
     last = list_prev(last);
     first->prev->next = last->next;
     last->next->prev = first->prev;

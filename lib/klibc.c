@@ -3,6 +3,7 @@
 #include "gdt.h"
 #include "interrupt.h"
 #include "const.h"
+#include "proc.h"
 
 public
 uint64_t make_desc(uint32_t base, uint32_t limit, uint16_t attr)
@@ -66,3 +67,14 @@ uint64_t make_task_gate(selector_t selector, uint8_t dpl)
     return make_gate(NULL, selector, 0, attr);
 }
 
+extern process proc1,proc2,proc3;
+extern process * current_proc;
+
+public 
+process * task_schedule()
+{
+    if(current_proc == &proc1)
+        return current_proc = &proc2;
+    else if(current_proc == &proc2) return current_proc = &proc3;
+    else return current_proc = &proc1;
+}

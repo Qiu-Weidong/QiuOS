@@ -113,5 +113,11 @@
 #define set_eflags(flags) __asm__ volatile("pushl %0; popf" ::"g"(flags))
 
 #define ljmp(fptr) __asm__ volatile("ljmp *(%0)" ::"g"(fptr))
+#define get_eax() ({                  \
+    unsigned int _v;                  \
+    __asm__ volatile("movl %%eax, %0" \
+                     : "=g"(_v)::);   \
+    _v;                               \
+})
 
 #endif // QIUOS_ASM_H_

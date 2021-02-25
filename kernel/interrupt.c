@@ -53,7 +53,7 @@ void init_8259A()
     nop();
     nop();
 
-    out_byte(INT_MASTER_MASK, 0xfd);
+    out_byte(INT_MASTER_MASK, 0xfe);
     nop();
     nop();
 

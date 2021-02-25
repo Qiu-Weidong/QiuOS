@@ -41,6 +41,8 @@ list_elem * list_head(list * list);
 public 
 list_elem * list_tail(list * list);
 
+public
+list_elem * list_splice (list_elem *before,list_elem *first, list_elem *last);
 public 
 list_elem * list_insert(list_elem * before, list_elem * elem);
 public 

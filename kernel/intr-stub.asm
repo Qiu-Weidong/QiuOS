@@ -19,8 +19,10 @@ extern coproc_error
 extern align_check
 extern machine_check
 extern simd_exception
+
+extern tss
 ; 外中断
-extern clock_handler
+extern task_schedule
 extern kerboard_handler
 
 [section .text]
@@ -119,9 +121,39 @@ simd_exception_stub:
     call simd_exception
     iret
 clock_intr_stub:
-    call clock_handler
+    ; 保存现场
+    sub esp, 4
+    pushad
+    push ds 
+    push es 
+    push fs 
+    push gs 
+
+    ; 修改段寄存器
+    mov dx, ss 
+    mov es, dx
+    mov fs, dx
+    mov ds, dx
+
+    ; 将esp指向内核栈，暂时为0x7e00
+    mov esp, 0x7e00
+
     mov al, 0x20
     out 0x20, al
+
+    call task_schedule
+
+    mov esp, eax
+    lea eax, [esp+72]
+    mov dword [tss+4], eax
+    lldt [esp+76]
+    pop gs
+    pop fs
+    pop es
+    pop ds
+    popad 
+    add esp, 4
+
     iret
 keyboard_intr_stub:
     call kerboard_handler

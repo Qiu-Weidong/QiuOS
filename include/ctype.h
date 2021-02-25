@@ -2,6 +2,8 @@
 #define QIUOS_CTYPE_H_
 
 #include "type.h"
+
+
 public 
 bool_t isalnum(char c);
 
