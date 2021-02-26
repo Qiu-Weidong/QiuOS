@@ -26,7 +26,8 @@ typedef struct
 
 typedef unsigned int pid_t;
 typedef unsigned int priority_t;
-typedef struct 
+
+typedef struct process_control_block
 {
     register_frame registers;   // 寄存器快照
     pid_t pid;                  // 进程id 72

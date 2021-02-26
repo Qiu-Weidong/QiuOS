@@ -85,6 +85,16 @@ void default_handler(uint32_t eip, uint16_t cs, uint32_t eflags); // 一个默�
 
 void clock_handler(uint32_t eip, uint16_t cs, uint32_t eflags);
 void keyboard_handler(uint32_t eip, uint16_t cs, uint32_t eflags);
+
+excp_handler excp_table[] = {
+    divide_error,single_step_exception,nmi,breakpoint_exception,overflow,bounds_check,invalid_opcode,
+    coproc_not_available,double_fault,coproc_seg_overrun,invalid_tss,segment_not_present,stack_exception,
+    general_protection,page_fault,NULL,coproc_error,align_check,machine_check,simd_exception
+};
+intr_handler irq_table[] = {
+    clock_handler, //keyboard_handler
+};
+
 // 中断桩
 void default_handler_stub();
 void divide_error_stub();
@@ -157,9 +167,9 @@ bool_t is_intr_on()
     return flags & 0x20;
 }
 
-void default_handler(uint32_t eip, uint16_t cs, uint32_t eflags)
+private 
+void info_excp(uint32_t eip, uint16_t cs, uint32_t eflags)
 {
-    puts("Unknown Exception\n\n");
     puts("EFLAGS:");
     puthex(eflags);
     putln();
@@ -170,10 +180,12 @@ void default_handler(uint32_t eip, uint16_t cs, uint32_t eflags)
     puthex(eip);
     putln();
 }
-void divide_error(uint32_t eip, uint16_t cs, uint32_t eflags)
+private
+void info_excp_with_err_code(uint32_t err_code,uint32_t eip, uint16_t cs,uint32_t eflags)
 {
-    // 触发方式，除以0
-    puts("#DE Divide Error\n\n");
+    puts("ERROR CODE:");
+    puthex(err_code);
+    putln();
     puts("EFLAGS:");
     puthex(eflags);
     putln();
@@ -183,21 +195,24 @@ void divide_error(uint32_t eip, uint16_t cs, uint32_t eflags)
     puts("EIP:");
     puthex(eip);
     putln();
+}
+void default_handler(uint32_t eip, uint16_t cs, uint32_t eflags)
+{
+    puts("Unknown Exception\n\n");
+    info_excp(eip,cs,eflags);
+}
+void divide_error(uint32_t eip, uint16_t cs, uint32_t eflags)
+{
+    // 触发方式，除以0
+    puts("#DE Divide Error\n\n");
+    info_excp(eip,cs,eflags);
     // fault, 会再次执行除法指令, 没有再次执行出错指令???,应该是执行了，但相应寄存器的内容已经改变
 }
 void single_step_exception(uint32_t eip, uint16_t cs, uint32_t eflags)
 {
     // 触发方式，TF置为1 , fault/trap
     puts("#DB Single Step\n\n");
-    puts("EFLAGS:");
-    puthex(eflags);
-    putln();
-    puts("CS:");
-    puthex(cs);
-    putln();
-    puts("EIP:");
-    puthex(eip);
-    putln();
+    info_excp(eip,cs,eflags);
     // hlt();
     // 将TF置为1后会一直触发该中断 fault或trap
 }
@@ -205,30 +220,14 @@ void nmi(uint32_t eip, uint16_t cs, uint32_t eflags)
 {
     // 触发方式，外部中断
     puts("- NMI Interrupt\n\n");
-    puts("EFLAGS:");
-    puthex(eflags);
-    putln();
-    puts("CS:");
-    puthex(cs);
-    putln();
-    puts("EIP:");
-    puthex(eip);
-    putln();
+    info_excp(eip,cs,eflags);
     // hlt();
 }
 void breakpoint_exception(uint32_t eip, uint16_t cs, uint32_t eflags)
 {
     // 触发方式 int3或int 3
     puts("#BP Breakpoint\n\n");
-    puts("EFLAGS:");
-    puthex(eflags);
-    putln();
-    puts("CS:");
-    puthex(cs);
-    putln();
-    puts("EIP:");
-    puthex(eip);
-    putln();
+    info_excp(eip,cs,eflags);
     // hlt();
     // trap, 不会重复执行触发指令(int 3和int3都是)
 }
@@ -236,15 +235,7 @@ void overflow(uint32_t eip, uint16_t cs, uint32_t eflags)
 {
     // into指令，若OF被置位
     puts("#OF Overflow\n\n");
-    puts("EFLAGS:");
-    puthex(eflags);
-    putln();
-    puts("CS:");
-    puthex(cs);
-    putln();
-    puts("EIP:");
-    puthex(eip);
-    putln();
+    info_excp(eip,cs,eflags);
     // hlt();
     // trap不会执行触发指令
 }
@@ -252,15 +243,7 @@ void bounds_check(uint32_t eip, uint16_t cs, uint32_t eflags)
 {
     // bound指令触发
     puts("#BR Bound Range Exceeded\n\n");
-    puts("EFLAGS:");
-    puthex(eflags);
-    putln();
-    puts("CS:");
-    puthex(cs);
-    putln();
-    puts("EIP:");
-    puthex(eip);
-    putln();
+    info_excp(eip,cs,eflags);
     // hlt();
     // fault, 会再次执行
 }
@@ -268,210 +251,85 @@ void invalid_opcode(uint32_t eip, uint16_t cs, uint32_t eflags)
 {
     // ud2指令触发
     puts("#UD Invalid Opcode (Undefined Opcode)\n\n");
-    puts("EFLAGS:");
-    puthex(eflags);
-    putln();
-    puts("CS:");
-    puthex(cs);
-    putln();
-    puts("EIP:");
-    puthex(eip);
-    putln();
-    hlt();
+    info_excp(eip,cs,eflags);
+    // hlt();
     // fault 会再次执行
 }
 void coproc_not_available(uint32_t eip, uint16_t cs, uint32_t eflags)
 {
     // fwait指令(未触发)
     puts("#NM Device Not Available (No Math Coprocessor)\n\n");
-    puts("EFLAGS:");
-    puthex(eflags);
-    putln();
-    puts("CS:");
-    puthex(cs);
-    putln();
-    puts("EIP:");
-    puthex(eip);
-    putln();
+    info_excp(eip,cs,eflags);
     // hlt();
 }
 void double_fault(uint32_t err_code, uint32_t eip, uint16_t cs, uint32_t eflags)
 {
     puts("#DF Double Fault\n\n");
-    puts("ERROR CODE:");
-    puthex(err_code);
-    putln();
-    puts("EFLAGS:");
-    puthex(eflags);
-    putln();
-    puts("CS:");
-    puthex(cs);
-    putln();
-    puts("EIP:");
-    puthex(eip);
-    putln();
+    info_excp_with_err_code(err_code,eip,cs,eflags);
     // hlt();abort不会返回
 }
 void coproc_seg_overrun(uint32_t eip, uint16_t cs, uint32_t eflags)
 {
     puts("- Coprocessor Segment Overrun\n\n");
-    puts("EFLAGS:");
-    puthex(eflags);
-    putln();
-    puts("CS:");
-    puthex(cs);
-    putln();
-    puts("EIP:");
-    puthex(eip);
-    putln();
+    info_excp(eip,cs,eflags);
     // hlt();
 }
 void invalid_tss(uint32_t err_code, uint32_t eip, uint16_t cs, uint32_t eflags)
 {
     puts("#TS Invalid TSS\n\n");
-    puts("ERROR CODE:");
-    puthex(err_code);
-    putln();
-    puts("EFLAGS:");
-    puthex(eflags);
-    putln();
-    puts("CS:");
-    puthex(cs);
-    putln();
-    puts("EIP:");
-    puthex(eip);
-    putln();
+    info_excp_with_err_code(err_code,eip,cs,eflags);
     // hlt();
     // fault，会再次执行
 }
 void segment_not_present(uint32_t err_code, uint32_t eip, uint16_t cs, uint32_t eflags)
 {
     puts("#NP Segment Not Present\n\n");
-    puts("ERROR CODE:");
-    puthex(err_code);
-    putln();
-    puts("EFLAGS:");
-    puthex(eflags);
-    putln();
-    puts("CS:");
-    puthex(cs);
-    putln();
-    puts("EIP:");
-    puthex(eip);
-    putln();
+    info_excp_with_err_code(err_code,eip,cs,eflags);
     hlt();
     // fault 会再次触发,但再次执行会触发一般保护错误，因为再次执行mov ds,ax指令，而ax的值已经改变
 }
 void stack_exception(uint32_t err_code, uint32_t eip, uint16_t cs, uint32_t eflags)
 {
     puts("#SS Stack-Segment Fault\n\n");
-    puts("ERROR CODE:");
-    puthex(err_code);
-    putln();
-    puts("EFLAGS:");
-    puthex(eflags);
-    putln();
-    puts("CS:");
-    puthex(cs);
-    putln();
-    puts("EIP:");
-    puthex(eip);
-    putln();
+    info_excp_with_err_code(err_code,eip,cs,eflags);
     hlt();
 }
 void general_protection(uint32_t err_code, uint32_t eip, uint16_t cs, uint32_t eflags)
 {
     puts("#GP General Protection\n\n");
-    puts("ERROR CODE:");
-    puthex(err_code);
-    putln();
-    puts("EFLAGS:");
-    puthex(eflags);
-    putln();
-    puts("CS:");
-    puthex(cs);
-    putln();
-    puts("EIP:");
-    puthex(eip);
-    putln();
+    info_excp_with_err_code(err_code,eip,cs,eflags);
     // hlt();
     // fault, 会再次执行
 }
 void page_fault(uint32_t err_code, uint32_t eip, uint16_t cs, uint32_t eflags)
 {
     puts("#PF Page Fault\n\n");
-    puts("ERROR CODE:");
-    puthex(err_code);
-    putln();
-    puts("EFLAGS:");
-    puthex(eflags);
-    putln();
-    puts("CS:");
-    puthex(cs);
-    putln();
-    puts("EIP:");
-    puthex(eip);
-    putln();
+    info_excp_with_err_code(err_code,eip,cs,eflags);
     hlt();
 }
 // 15     intel保留未使用
 void coproc_error(uint32_t eip, uint16_t cs, uint32_t eflags)
 {
     puts("#MF x87 FPU Floating-Point Error (Math Fault)\n\n");
-    puts("EFLAGS:");
-    puthex(eflags);
-    putln();
-    puts("CS:");
-    puthex(cs);
-    putln();
-    puts("EIP:");
-    puthex(eip);
-    putln();
+    info_excp(eip,cs,eflags);
     hlt();
 }
 void align_check(uint32_t err_code, uint32_t eip, uint16_t cs, uint32_t eflags)
 {
     puts("#AC Alignment Check\n\n");
-    puts("ERROR CODE:");
-    puthex(err_code);
-    putln();
-    puts("EFLAGS:");
-    puthex(eflags);
-    putln();
-    puts("CS:");
-    puthex(cs);
-    putln();
-    puts("EIP:");
-    puthex(eip);
-    putln();
+    info_excp_with_err_code(err_code,eip,cs,eflags);
     hlt();
 }
 void machine_check(uint32_t eip, uint16_t cs, uint32_t eflags)
 {
     puts("#MC Machine Check\n\n");
-    puts("EFLAGS:");
-    puthex(eflags);
-    putln();
-    puts("CS:");
-    puthex(cs);
-    putln();
-    puts("EIP:");
-    puthex(eip);
-    putln();
+    info_excp(eip,cs,eflags);
     hlt();
 }
 void simd_exception(uint32_t eip, uint16_t cs, uint32_t eflags) 
 {
     puts("#XF SIMD Floating-Point Exception\n\n");
-    puts("EFLAGS:");
-    puthex(eflags);
-    putln();
-    puts("CS:");
-    puthex(cs);
-    putln();
-    puts("EIP:");
-    puthex(eip);
-    putln();
+    info_excp(eip,cs,eflags);
     hlt();
 }
 
@@ -480,7 +338,7 @@ void clock_handler(uint32_t eip, uint16_t cs, uint32_t eflags)
 {
     
 }
-void kerboard_handler(uint32_t eip, uint16_t cs, uint32_t eflags)
+void keyboard_handler(uint32_t eip, uint16_t cs, uint32_t eflags)
 {
     uint8_t scan_code = in_byte(0x60);
     puthex(scan_code);

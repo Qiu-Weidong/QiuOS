@@ -10,7 +10,7 @@ BXIMG		:= bximage
 
 # 参数
 BOOTFLAGS	:= -I ./boot/include/
-ASMFLAGS	:= -f elf -g -F DWARF
+ASMFLAGS	:= -f elf -g -F DWARF -I include/
 CFLAGS		:= -I include/ -m32 -c -fno-builtin -fno-stack-protector -g -O2
 LDFLAGS		:= -Ttext 0x10400 -e kernel_main -m elf_i386
 GDBFLAGS	:= -q -ex "target remote localhost:1234" 		\

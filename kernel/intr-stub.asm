@@ -1,29 +1,12 @@
 extern default_handler
-extern divide_error
-extern single_step_exception
-extern nmi
-extern breakpoint_exception
-extern overflow
-extern bounds_check
-extern invalid_opcode
-extern coproc_not_available
-extern double_fault
-extern coproc_seg_overrun
-extern invalid_tss
-extern segment_not_present
-extern stack_exception
-extern general_protection
-
-extern page_fault
-extern coproc_error
-extern align_check
-extern machine_check
-extern simd_exception
+extern irq_table
+extern excp_table
 
 extern tss
+extern start_process
 ; 外中断
 extern task_schedule
-extern kerboard_handler
+extern keyboard_handler
 
 [section .text]
 global default_handler_stub
@@ -57,77 +40,129 @@ default_handler_stub:
     call default_handler
     iret
 divide_error_stub:
-    call divide_error
+    ; call divide_error
+    call [excp_table + 0]
     iret
 single_step_exception_stub:
-    call single_step_exception
+    ; call single_step_exception
+    call [excp_table + 4]
     iret
 nmi_stub:
-    call nmi
+    ; call nmi
+    call [excp_table + 8]
     iret
 breakpoint_exception_stub:
-    call breakpoint_exception
+    ; call breakpoint_exception
+    call [excp_table + 12]
     iret
 overflow_stub:
-    call overflow
+    ; call overflow
+    call [excp_table + 16]
     iret
 bounds_check_stub:
-    call bounds_check
+    ; call bounds_check
+    call [excp_table + 20]
     iret
 invalid_opcode_stub:
-    call invalid_opcode
+    ; call invalid_opcode
+    call [excp_table + 24]
     iret
 coproc_not_available_stub:
-    call coproc_not_available
+    ; call coproc_not_available
+    call [excp_table + 28]
     iret
 double_fault_stub:
-    call double_fault
+    ; call double_fault
+    call [excp_table + 32]
     add esp, 4
     iret                        ; abort不会返回，可以没有iret指令
 coproc_seg_overrun_stub:
-    call coproc_seg_overrun
+    ; call coproc_seg_overrun
+    call [excp_table + 36]
     iret
 invalid_tss_stub:
-    call invalid_tss
+    ; call invalid_tss
+    call [excp_table+40]
     add esp, 4
     iret
 segment_not_present_stub:
-    call segment_not_present
+    ; call segment_not_present
+    call [excp_table+44]
     add esp, 4
     iret
 stack_exception_stub:
-    call stack_exception
+    ; call stack_exception
+    call [excp_table+48]
     add esp, 4
     iret
 general_protection_stub:
-    call general_protection
+    ; call general_protection
+    call [excp_table+52]
     add esp, 4
     iret
 page_fault_stub:
-    call page_fault
+    ; call page_fault
+    call [excp_table + 56]
     add esp, 4
     iret
 coproc_error_stub:
-    call coproc_error
+    ; call coproc_error
+    call [excp_table+64]
     iret
 align_check_stub:
-    call align_check
+    ; call align_check
+    call [excp_table+68]
     add esp, 4
     iret
 machine_check_stub:
-    call machine_check
+    ; call machine_check
+    call [excp_table+72]
     iret                    ; abort不会返回，可以没有iret指令
 simd_exception_stub:
-    call simd_exception
+    ; call simd_exception
+    call [excp_table + 76]
     iret
 clock_intr_stub:
     ; 保存现场
-    sub esp, 4
+    call save
+    ; esp指向内核栈
+
+    ; 屏蔽当前中断，这里是时钟中断
+    in al, 0x21                     ; '.
+    or al, 0x01                     ;   |
+    out 0x21, al                    ;   |
+                                    ;   | 可以利用宏来简化
+    ; 开启中断                       ;   |
+    mov al, 0x20                    ;   |
+    out 0x20, al                    ;  /
+
+    call task_schedule
+
+    ; 恢复当前中断
+    in	al, 0x21	
+	and	al, ~1		
+	out	0x21, al	    
+    ; 启动进程，方法，压栈要启动的进程的pcb指针，然后call start_process函数
+    push eax
+    call start_process
+
+keyboard_intr_stub:
+    call keyboard_handler
+    mov al, 0x20
+    out 0x20, al
+    iret
+
+
+save:
+    ; esp -> register的最末尾
     pushad
     push ds 
     push es 
     push fs 
     push gs 
+
+    ; 此时esp -> pcb开始处
+    mov eax, esp
 
     ; 修改段寄存器
     mov dx, ss 
@@ -137,26 +172,5 @@ clock_intr_stub:
 
     ; 将esp指向内核栈，暂时为0x7e00
     mov esp, 0x7e00
-
-    mov al, 0x20
-    out 0x20, al
-
-    call task_schedule
-
-    mov esp, eax
-    lea eax, [esp+72]
-    mov dword [tss+4], eax
-    lldt [esp+76]
-    pop gs
-    pop fs
-    pop es
-    pop ds
-    popad 
-    add esp, 4
-
-    iret
-keyboard_intr_stub:
-    call kerboard_handler
-    mov al, 0x20
-    out 0x20, al
-    iret
+    ; 返回
+    jmp [eax + 48]

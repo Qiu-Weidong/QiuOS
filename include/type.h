@@ -24,6 +24,8 @@ typedef unsigned int        pid_t;
 typedef unsigned int        tid_t;
 
 typedef	void (*intr_stub)	();
+typedef void *intr_handler;
+typedef void *excp_handler;
 typedef int (*compare) (const void *,const void *);
 typedef int (*process_entry) (int argc, char ** argv);
 

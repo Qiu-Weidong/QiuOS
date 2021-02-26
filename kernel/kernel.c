@@ -52,6 +52,7 @@ int kernel_main()
     // ljmp(fptr);
     // sti();
     // for (;;);
+    ud2();
 
     ldt[0] = make_seg_desc(0, 0xfffff, DA_32 | DA_CR | DA_DPL3 | DA_LIMIT_4K); // 用户进程的代码段描述符
     ldt[1] = make_seg_desc(0, 0xfffff, DA_32 | DA_DRW | DA_DPL3 | DA_LIMIT_4K);
