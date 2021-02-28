@@ -40,6 +40,7 @@ int kernel_main()
     set_color(HIGHLIGHT | FG_YELLOW | BG_BLACK);
     kernel_init();
     puts("Welcome to QiuOS World!\n");
+ 
     dis_color = HIGHLIGHT | FG_BLUE;
 
     ldt[0] = make_seg_desc(0, 0xfffff, DA_32 | DA_CR | DA_DPL3 | DA_LIMIT_4K); // 用户进程的代码段描述符
@@ -54,7 +55,7 @@ int kernel_main()
     proc.registers.ds = proc.registers.es = proc.registers.ss = proc.registers.fs = (1 << 3) + SA_RPL3 + SA_TIL;
     proc.registers.gs = (2 << 3) + SA_RPL3 + SA_TIL;
     // if 9     0001 0010 0000 0010 开中断 eflags |= 0x200
-    proc.registers.eflags = 0x1002;
+    proc.registers.eflags = IOPL1_FLAG|INTR_FLAG|MBS_FLAG;
 
     proc.registers.esp = (uint32_t)stack + 1024;
     proc.registers.eip = (uint32_t)test;

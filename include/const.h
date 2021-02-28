@@ -94,4 +94,27 @@
 #define	INT_VECTOR_IRQ0			0x20
 #define	INT_VECTOR_IRQ8			0x28
 
+// eflags相关
+#define MBS_FLAG                0x2     // 必须设置(must be set)
+#define CARRY_FLAG              0x1     // 进位标志
+#define PARITY_FLAG             0x4     // 奇偶标志
+#define AUXILIARY_CARRY_FLAG    0x10    // 辅助进位标志
+#define ZERO_FLAG               0x40    // 零标志
+#define SIGN_FLAG               0x80    // 符号标志
+#define TRAP_FLAG               0x100   // 陷阱标志(单步调试)
+#define INTR_FLAG               0x200   // 中断许可标志
+#define DIRECTION_FLAG          0x400   // 方向标志
+#define OVERFLOW_FLAG           0x800   // 溢出标志
+#define IOPL0_FLAG              0x0000  // IOPL0标志
+#define IOPL1_FLAG              0x1000  // IOPL1标志
+#define IOPL2_FLAG              0x2000  // IOPL2标志
+#define IOPL3_FLAG              0x3000  // IOPL3标志
+#define NESTED_FLAG             0x4000  // 嵌套标志
+#define RESUME_FLAG             0x10000 // 恢复标志
+#define VM_FLAG                 0x20000 // 虚拟8086标志
+#define ALIGN_CHECK_FLAG        0x40000 // 对齐标志
+#define VIF_FLAG                0x80000 // 虚拟中断标志
+#define VIP_FLAG                0x100000 // 虚拟中断标志
+#define ID_FLAG                 0x200000 // 判断CPU是否支持CPUID指令
+
 #endif // QIUOS_CONST_H_

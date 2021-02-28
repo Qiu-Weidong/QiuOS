@@ -106,6 +106,8 @@ void idt_init()
 
     for (int i = 0; i < IDT_SIZE; i++)
         intr_handlers[i] = default_handler;
+    
+    intr_handlers[INT_VECTOR_IRQ0] = clock_handler;
 
     uint16_t idt_ptr[3];
     *((uint16_t volatile *)idt_ptr) = sizeof(idt) - 1;
@@ -158,4 +160,11 @@ void default_handler(const intr_frame *frame)
     puts("EFLAGS:");
     puthex(frame->eflags);
     putln();
+}
+void clock_handler(const intr_frame * frame)
+{
+    static unsigned int t = 0;
+    t = (t+1)%1000;
+    if(t == 400)
+    puts("clock!\n");
 }

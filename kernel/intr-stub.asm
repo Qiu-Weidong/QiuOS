@@ -1,5 +1,12 @@
 ; 一个假的常量
 has_err_code    equ 0
+; 与8259A相关的一些常量
+INT_M_CTL	    equ	0x20	
+INT_M_CTLMASK	equ	0x21	
+INT_S_CTL	    equ	0xA0	
+INT_S_CTLMASK	equ	0xA1	
+EOI		        equ	0x20
+
 
 ; 全局变量
 extern intr_handlers
@@ -12,16 +19,7 @@ extern tss
     call save
 
     call [intr_handlers+4*%1]
-    mov esp, [esp]
-
-    pop gs 
-    pop fs 
-    pop es 
-    pop ds 
-    popad
-
-    add esp, 8
-    iret
+    call start_process
 %endmacro
 
 ; 没有错误码的异常桩
@@ -36,6 +34,28 @@ extern tss
 
     call start_process
 
+%endmacro
+
+; 外中断都没有错误码
+; intr_stub(int irq)
+%macro intr_stub 1
+    push %1
+    call save
+    
+    in al, INT_M_CTLMASK
+    or al, (1<<%1)
+    out INT_M_CTLMASK, al
+
+    mov al, EOI
+    out INT_M_CTL, al
+
+    call [intr_handlers+4*%1+32*4]
+
+    in al, INT_M_CTLMASK
+    and al, ~(1<<%1)
+    out INT_M_CTLMASK, al
+
+    call start_process
 %endmacro
 
 [section .data]
@@ -61,7 +81,12 @@ intr_stubs:
     dd align_check_stub             ;17
     dd machine_check_stub           ;18
     dd simd_exception_stub          ;19
-    
+
+    ; 20~31 intel保留为使用
+    times 31-20+1 dd 0
+
+    ; 接下来是8259A外中断
+    dd clock_stub                   ;时钟中断32 
 times 256*4 - ($-intr_stubs) dd 0   ; 全部置为0
 
 [section .text]
@@ -88,6 +113,8 @@ align_check_stub:           exception_stub 17, has_err_code
 machine_check_stub:         exception_stub 18
 simd_exception_stub:        exception_stub 19
 
+; 中断桩
+clock_stub:                 intr_stub 0
 
 
 offset_of_retaddr   equ 48
