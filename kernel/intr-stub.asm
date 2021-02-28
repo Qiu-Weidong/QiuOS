@@ -1,30 +1,18 @@
 ; 一个假的常量
 has_err_code    equ 0
 
-; 导入中断处理函数列表
+; 全局变量
 extern intr_handlers
-; 导入当前进程指针
-extern current_process
+extern current_proc
+extern tss 
 
 ; 有错误码的异常桩
 ; exception_stub(int vec_no, has_err_code);
 %macro exception_stub 2
-    push %1     ; push vec_no
-
-    pushad 
-    push ds 
-    push es 
-    push fs 
-    push gs 
-
-    mov eax, esp                ; '.
-    mov esp, 0x7e00             ;  | 切换堆栈并设置参数
-    push eax                    ;  /
+    call save
 
     call [intr_handlers+4*%1]
-    add esp, 4
-
-    ; mov esp, [current_process]
+    mov esp, [esp]
 
     pop gs 
     pop fs 
@@ -39,27 +27,15 @@ extern current_process
 ; 没有错误码的异常桩
 ; exception_stub(int vec_no);
 %macro exception_stub 1
-    sub esp, 4
-    push %1
+    push %1                     ; 将中断号压栈
 
-    pushad 
-    push ds 
-    push es 
-    push fs 
-    push gs 
+    call save
 
-    push esp
     call [intr_handlers+4*%1]
-    add esp, 4
+    ; mov esp, [esp]              ; 将esp指向要调度进程intr_frame的起始位置, 这里还是原来的进程
 
-    pop gs 
-    pop fs 
-    pop es 
-    pop ds 
-    popad
+    call start_process
 
-    add esp, 8
-    iret
 %endmacro
 
 [section .data]
@@ -89,6 +65,8 @@ intr_stubs:
 times 256*4 - ($-intr_stubs) dd 0   ; 全部置为0
 
 [section .text]
+global start_process
+
 ; 异常桩
 divide_error_stub:          exception_stub 0
 single_step_exception_stub: exception_stub 1
@@ -112,8 +90,39 @@ simd_exception_stub:        exception_stub 19
 
 
 
-
+offset_of_retaddr   equ 48
 ; 保存现场
 ; 重新设置esp，并push之前的esp
 save:
-    ret
+    pushad
+    push ds 
+    push es 
+    push fs 
+    push gs 
+
+    mov esi, esp
+    mov esp, 0x7c00
+    push esi
+
+    mov ax, ss 
+    mov ds, ax 
+    mov es, ax 
+    mov fs, ax 
+
+    jmp [esi+offset_of_retaddr]
+    
+; void start_process(process * proc);
+start_process:
+    mov esp, [esp+4]
+    lldt [esp + 80]
+    lea eax, [esp+76]
+    mov dword [tss+4], eax
+restart:    ; 调用前先将esp指向PCB的开始位置
+    pop gs 
+    pop fs 
+    pop es 
+    pop ds 
+    popad
+
+    add esp, 8
+    iretd

@@ -6,6 +6,7 @@
 
 uint64_t gdt[GDT_SIZE];
 extern task_state_segment tss;
+
 public
 void gdt_init()
 {

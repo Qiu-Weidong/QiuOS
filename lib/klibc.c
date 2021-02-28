@@ -70,11 +70,11 @@ uint64_t make_task_gate(selector_t selector, uint8_t dpl)
 extern process proc1,proc2,proc3;
 extern process * current_proc;
 
-public 
-process * task_schedule()
-{
-    if(current_proc == &proc1)
-        return current_proc = &proc2;
-    else if(current_proc == &proc2) return current_proc = &proc3;
-    else return current_proc = &proc1;
-}
+// public 
+// process * task_schedule()
+// {
+//     if(current_proc == &proc1)
+//         return current_proc = &proc2;
+//     else if(current_proc == &proc2) return current_proc = &proc3;
+//     else return current_proc = &proc1;
+// }

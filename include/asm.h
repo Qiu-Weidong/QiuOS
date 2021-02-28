@@ -96,11 +96,12 @@
     _v;                                \
 })
 
-#define set_ds(value) __asm__ volatile("movw %0, %%ds" ::"a"(value))
-#define set_es(value) __asm__ volatile("movw %0, %%es" ::"a"(value))
-#define set_fs(value) __asm__ volatile("movw %0, %%fs" ::"a"(value))
-#define set_gs(value) __asm__ volatile("movw %0, %%gs" ::"a"(value))
-#define set_ss(value) __asm__ volatile("movw %0, %%ss" ::"a"(value))
+#define set_ds(value) __asm__ volatile("movw %w0, %%ds" ::"a"(value))
+#define set_es(value) __asm__ volatile("movw %w0, %%es" ::"a"(value))
+#define set_fs(value) __asm__ volatile("movw %w0, %%fs" ::"a"(value))
+#define set_gs(value) __asm__ volatile("movw %w0, %%gs" ::"a"(value))
+#define set_ss(value) __asm__ volatile("movw %w0, %%ss" ::"a"(value))
+#define set_esp(value) __asm__ volatile("movl %0, %%esp"::"a"(value))
 
 #define get_eflags() ({                \
     unsigned int _v;                   \

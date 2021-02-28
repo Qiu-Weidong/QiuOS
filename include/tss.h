@@ -3,7 +3,7 @@
 #include "type.h"
 #define TSS_MAX_SIZE 128
 // task state segment(tss) 任务状态段
-typedef struct 
+typedef struct s_task_state_segment
 {
     uint16_t back_link,:16;                      // 上一个任务链接
     uint32_t esp0;                           // 0特权级的栈指针
@@ -27,6 +27,9 @@ typedef struct
     uint16_t trace, bitmap;
 }task_state_segment;
 
-
+struct s_eflag
+{
+    
+};
 
 #endif // QIUOS_TSS_H_
