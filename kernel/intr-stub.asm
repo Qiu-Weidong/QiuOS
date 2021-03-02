@@ -9,9 +9,9 @@ EOI		        equ	0x20
 
 
 ; 全局变量
-extern intr_handlers
-extern current_proc
-extern tss 
+[extern intr_handlers   ]
+[extern current_proc    ]
+[extern tss             ]
 
 ; 有错误码的异常桩
 ; exception_stub(int vec_no, has_err_code);
@@ -59,7 +59,7 @@ extern tss
 %endmacro
 
 [section .data]
-global intr_stubs
+[global intr_stubs]
 intr_stubs:
     dd divide_error_stub            ; 0
     dd single_step_exception_stub   ; 1
@@ -76,21 +76,24 @@ intr_stubs:
     dd stack_exception_stub         ;12
     dd general_protection_stub      ;13
     dd page_fault_stub              ;14
-    dd 0                            ;15 intel保留为使用
+    dd 0                            ;15 intel保留未使用
     dd coproc_error_stub            ;16
     dd align_check_stub             ;17
     dd machine_check_stub           ;18
     dd simd_exception_stub          ;19
 
-    ; 20~31 intel保留为使用
+    ; 20~31 intel保留未使用
     times 31-20+1 dd 0
 
     ; 接下来是8259A外中断
     dd clock_stub                   ;时钟中断32 
+    dd keyboard_stub                ;33键盘中断
+
+
 times 256*4 - ($-intr_stubs) dd 0   ; 全部置为0
 
 [section .text]
-global start_process
+[global start_process]
 
 ; 异常桩
 divide_error_stub:          exception_stub 0
@@ -115,6 +118,7 @@ simd_exception_stub:        exception_stub 19
 
 ; 中断桩
 clock_stub:                 intr_stub 0
+keyboard_stub:              intr_stub 1
 
 
 offset_of_retaddr   equ 48
@@ -144,7 +148,7 @@ start_process:
     lldt [esp + 80]
     lea eax, [esp+76]
     mov dword [tss+4], eax
-restart:    ; 调用前先将esp指向PCB的开始位置
+    
     pop gs 
     pop fs 
     pop es 
@@ -153,3 +157,5 @@ restart:    ; 调用前先将esp指向PCB的开始位置
 
     add esp, 8
     iretd
+
+    

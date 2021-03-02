@@ -52,9 +52,13 @@
 
 #define lgdt(gdt_ptr) __asm__ volatile("lgdt (%0)" ::"g"(gdt_ptr))
 #define lidt(idt_ptr) __asm__ volatile("lidt (%0)" ::"g"(idt_ptr))
-#define ltr(tss_ptr) __asm__ volatile("ltr  %w0" ::"r"(tss_ptr))
-#define lldt(ldt_ptr) __asm__ volatile("lldt %w0" ::"r"(ldt_ptr))
+#define ltr(tss_sel) __asm__ volatile("ltr  %w0" ::"r"(tss_sel))
+#define lldt(ldt_sel) __asm__ volatile("lldt %w0" ::"r"(ldt_sel))
+
 #define sgdt(gdt_ptr) __asm__ volatile("sgdt (%0)" ::"g"(gdt_ptr))
+#define sidt(idt_ptr) __asm__ volatile("sidt (%0)" ::"g"(idt_ptr))
+#define str(tss_sel) __asm__ volatile("str %w0" ::"g"(tss_sel))
+#define sldt(ldt_sel) __asm__ volatile("sldt %w0" ::"g"(ldt_sel))
 
 #define get_ds() ({                    \
     unsigned short _v;                 \
@@ -101,7 +105,7 @@
 #define set_fs(value) __asm__ volatile("movw %w0, %%fs" ::"a"(value))
 #define set_gs(value) __asm__ volatile("movw %w0, %%gs" ::"a"(value))
 #define set_ss(value) __asm__ volatile("movw %w0, %%ss" ::"a"(value))
-#define set_esp(value) __asm__ volatile("movl %0, %%esp"::"a"(value))
+#define set_esp(value) __asm__ volatile("movl %0, %%esp" ::"a"(value))
 
 #define get_eflags() ({                \
     unsigned int _v;                   \
@@ -114,11 +118,5 @@
 #define set_eflags(flags) __asm__ volatile("pushl %0; popf" ::"g"(flags))
 
 #define ljmp(fptr) __asm__ volatile("ljmp *(%0)" ::"g"(fptr))
-#define get_eax() ({                  \
-    unsigned int _v;                  \
-    __asm__ volatile("movl %%eax, %0" \
-                     : "=g"(_v)::);   \
-    _v;                               \
-})
 
 #endif // QIUOS_ASM_H_

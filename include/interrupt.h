@@ -44,6 +44,16 @@ void idt_init();
 public
 bool_t is_intr_on();
 
+// 这3个函数在i8259a.asm中定义
+public
+void init_8259a();
+
+public 
+void enable_irq(int irq);
+
+public 
+void disable_irq(int irq);
+
 typedef void (*intr_handler)(const intr_frame *);
 
 #endif // QIUOS_INTERRUPT_H_

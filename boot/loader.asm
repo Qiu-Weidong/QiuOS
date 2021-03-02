@@ -222,3 +222,4 @@ MemChkTitle         equ _MemChkTitle    + BaseOfLoaderPhyAddr
 RAMSize             equ _RAMSize        + BaseOfLoaderPhyAddr
 MemChkBuf           equ _MemChkBuf      + BaseOfLoaderPhyAddr
 MCRCount            equ _MCRCount       + BaseOfLoaderPhyAddr
+

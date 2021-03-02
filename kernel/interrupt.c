@@ -12,55 +12,6 @@ uint64_t idt[IDT_SIZE];
 extern intr_stub intr_stubs[IDT_SIZE];
 intr_handler intr_handlers[IDT_SIZE];
 
-private
-void init_8259A()
-{
-    out_byte(INT_MASTER_MASK, 0xff);
-    nop();
-    nop();
-
-    out_byte(INT_SLAVE_MASK, 0xff);
-    nop();
-    nop();
-
-    out_byte(INT_MASTER_CONTROLLER, 0x11);
-    nop();
-    nop();
-
-    out_byte(INT_SLAVE_CONTROLLER, 0x11);
-    nop();
-    nop();
-
-    out_byte(INT_MASTER_MASK, INT_VECTOR_IRQ0);
-    nop();
-    nop();
-
-    out_byte(INT_SLAVE_MASK, INT_VECTOR_IRQ8);
-    nop();
-    nop();
-
-    out_byte(INT_MASTER_MASK, 0x04);
-    nop();
-    nop();
-
-    out_byte(INT_SLAVE_MASK, 0x02);
-    nop();
-    nop();
-
-    out_byte(INT_MASTER_MASK, 0x01);
-    nop();
-    nop();
-
-    out_byte(INT_SLAVE_MASK, 0x01);
-    nop();
-    nop();
-
-    out_byte(INT_MASTER_MASK, 0xfe);
-    nop();
-    nop();
-
-    out_byte(INT_SLAVE_MASK, 0xff);
-}
 
 // 异常处理函数
 // 向量号 助记符 描述      类型         出错码  源
@@ -94,7 +45,11 @@ public
 void idt_init()
 {
     // 先初始化8259A
-    init_8259A();
+    init_8259a();
+
+    // 开启键盘中断
+    enable_irq(1);
+
     const selector_t cs_selector = (1 << 3) + SA_RPL0 + SA_TIG;
 
     // 0~19设置为陷阱门
@@ -108,6 +63,7 @@ void idt_init()
         intr_handlers[i] = default_handler;
     
     intr_handlers[INT_VECTOR_IRQ0] = clock_handler;
+    intr_handlers[INT_VECTOR_IRQ0+1] = keyboard_handler;
 
     uint16_t idt_ptr[3];
     *((uint16_t volatile *)idt_ptr) = sizeof(idt) - 1;
@@ -119,7 +75,7 @@ public
 bool_t is_intr_on()
 {
     uint32_t flags = get_eflags();
-    return flags & 0x20;
+    return flags & INTR_FLAG;
 }
 
 const char *err_msg[] = {
@@ -167,4 +123,11 @@ void clock_handler(const intr_frame * frame)
     t = (t+1)%1000;
     if(t == 400)
     puts("clock!\n");
+}
+
+void keyboard_handler(const intr_frame * frame)
+{
+    // puts("B");
+    uint8_t scan_code = in_byte(0x60);
+    puthex(scan_code);
 }

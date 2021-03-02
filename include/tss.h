@@ -27,9 +27,4 @@ typedef struct s_task_state_segment
     uint16_t trace, bitmap;
 }task_state_segment;
 
-struct s_eflag
-{
-    
-};
-
 #endif // QIUOS_TSS_H_

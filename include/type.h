@@ -4,6 +4,7 @@
 #define public
 #define private static
 #define NULL ((void *)0)
+#define nullptr ((void *)0)
 
 #define true 1
 #define false 0

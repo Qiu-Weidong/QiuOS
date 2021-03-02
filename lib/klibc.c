@@ -64,7 +64,7 @@ public
 uint64_t make_task_gate(selector_t selector, uint8_t dpl)
 {
     uint8_t attr = ((dpl % 3) << 5) | DA_TaskGate;
-    return make_gate(NULL, selector, 0, attr);
+    return make_gate(nullptr, selector, 0, attr);
 }
 
 extern process proc1,proc2,proc3;
