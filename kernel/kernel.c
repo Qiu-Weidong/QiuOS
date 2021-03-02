@@ -9,17 +9,15 @@
 #include "tss.h"
 #include "proc.h"
 
-uint32_t volatile dis_pos = 2400; // 从第15行开始显示
-uint8_t volatile dis_color = 0xf; // 默认颜色为白色高亮
-extern uint64_t gdt[GDT_SIZE];    // gdt表
-extern uint64_t idt[IDT_SIZE];    // idt表
-
-uint64_t ldt[3];
-
-process volatile *current_proc;
-process proc;
-task_state_segment tss;
-uint8_t stack[1024];
+public uint32_t volatile dis_pos = 2400; // 从第15行开始显示
+public uint8_t volatile dis_color = 0xf; // 默认颜色为白色高亮
+public uint64_t gdt[GDT_SIZE];    // gdt表
+public uint64_t idt[IDT_SIZE];    // idt表
+public uint64_t ldt[3];
+public process volatile *current_proc;
+public process proc;
+public task_state_segment tss;
+public uint8_t stack[1024];
 
 private
 void kernel_init();
@@ -32,10 +30,13 @@ void test()
     for(;;);
 }
 
+public
 int kernel_main()
 {
     set_color(HIGHLIGHT | FG_YELLOW | BG_BLACK);
     kernel_init();
+
+    
     puts("Welcome to QiuOS World!\n");
 
     dis_color = HIGHLIGHT | FG_BLUE;

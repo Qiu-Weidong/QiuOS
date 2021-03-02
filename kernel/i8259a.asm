@@ -1,3 +1,4 @@
+
 INT_M_CTL	    equ	0x20	
 INT_M_CTLMASK	equ	0x21	
 INT_S_CTL	    equ	0xA0	
@@ -7,10 +8,11 @@ EOI		        equ	0x20
 %macro delay 1
     times %1 nop
 %endmacro
+
 [section .text]
-[global enable_irq]
+[global enable_irq ]
 [global disable_irq]
-[global init_8259a]
+[global init_8259a ]
 
 
 ; void init_8259a();

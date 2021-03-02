@@ -1,5 +1,9 @@
 ; 一个假的常量
 has_err_code    equ 0
+
+; 中断处理过程使用的栈顶
+kernel_esp      equ 0x7e00
+
 ; 与8259A相关的一些常量
 INT_M_CTL	    equ	0x20	
 INT_M_CTLMASK	equ	0x21	
@@ -13,13 +17,17 @@ EOI		        equ	0x20
 [extern current_proc    ]
 [extern tss             ]
 
+; 导入函数
+[extern restart_current_process]
+
 ; 有错误码的异常桩
 ; exception_stub(int vec_no, has_err_code);
 %macro exception_stub 2
     call save
 
     call [intr_handlers+4*%1]
-    call start_process
+    add esp, 4
+    ret 
 %endmacro
 
 ; 没有错误码的异常桩
@@ -31,9 +39,8 @@ EOI		        equ	0x20
 
     call [intr_handlers+4*%1]
     ; mov esp, [esp]              ; 将esp指向要调度进程intr_frame的起始位置, 这里还是原来的进程
-
-    call start_process
-
+    add esp, 4
+    ret 
 %endmacro
 
 ; 外中断都没有错误码
@@ -50,12 +57,12 @@ EOI		        equ	0x20
     out INT_M_CTL, al
 
     call [intr_handlers+4*%1+32*4]
+    add esp, 4
 
     in al, INT_M_CTLMASK
     and al, ~(1<<%1)
     out INT_M_CTLMASK, al
-
-    call start_process
+    ret 
 %endmacro
 
 [section .data]
@@ -93,7 +100,6 @@ intr_stubs:
 times 256*4 - ($-intr_stubs) dd 0   ; 全部置为0
 
 [section .text]
-[global start_process]
 
 ; 异常桩
 divide_error_stub:          exception_stub 0
@@ -132,7 +138,8 @@ save:
     push gs 
 
     mov esi, esp
-    mov esp, 0x7c00
+    mov esp, kernel_esp
+    push restart_current_process
     push esi
 
     mov ax, ss 
@@ -141,21 +148,5 @@ save:
     mov fs, ax 
 
     jmp [esi+offset_of_retaddr]
-    
-; void start_process(process * proc);
-start_process:
-    mov esp, [esp+4]
-    lldt [esp + 80]
-    lea eax, [esp+76]
-    mov dword [tss+4], eax
-    
-    pop gs 
-    pop fs 
-    pop es 
-    pop ds 
-    popad
-
-    add esp, 8
-    iretd
 
     

@@ -16,10 +16,10 @@ typedef struct process_control_block
 }process;
 
 public 
-void start_process(process * proc);
+void start_process(process * proc) NO_RETURN;
 
 public 
-void restart_current_process();
+void restart_current_process() NO_RETURN;
 
 public 
 void task_schedule();

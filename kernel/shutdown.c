@@ -40,3 +40,4 @@ void reboot()
     puts("Rebooting...\n");
     hlt();
 }
+

@@ -7,10 +7,9 @@
 #include "interrupt.h"
 #include "asm.h"
 #include "const.h"
+#include "global.h"
 
-uint64_t idt[IDT_SIZE];
-extern intr_stub intr_stubs[IDT_SIZE];
-private intr_handler intr_handlers[IDT_SIZE];
+intr_handler intr_handlers[IDT_SIZE];
 
 
 // 异常处理函数
@@ -48,6 +47,7 @@ void idt_init()
     init_8259a();
 
     // 开启键盘中断
+    enable_irq(0);
     enable_irq(1);
 
     const selector_t cs_selector = (1 << 3) + SA_RPL0 + SA_TIG;
@@ -66,7 +66,7 @@ void idt_init()
     intr_handlers[INT_VECTOR_IRQ0+1] = keyboard_handler;
 
     uint16_t idt_ptr[3];
-    *((uint16_t volatile *)idt_ptr) = sizeof(idt) - 1;
+    *((uint16_t volatile *)idt_ptr) = sizeof(uint64_t)*IDT_SIZE - 1;
     *((uint32_t volatile *)(idt_ptr + 1)) = (uint32_t)idt;
     lidt(idt_ptr);
 }
