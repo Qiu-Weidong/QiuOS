@@ -92,3 +92,5 @@ debug:$(IMG) $(KERNEL)
 	@$(BOCHS) -f $(BOCHSRC) -q 2>bochsout.txt >/dev/null  &
 	@$(DEBUG) $(GDBFLAGS) $(KERNEL)
 
+# fetch_raw_descriptor: GDT: index (ff57) 1fea > limit (2f)
+# 这个错误很可能是没有加载tss

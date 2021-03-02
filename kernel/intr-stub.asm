@@ -97,7 +97,7 @@ intr_stubs:
     dd keyboard_stub                ;33键盘中断
 
 
-times 256*4 - ($-intr_stubs) dd 0   ; 全部置为0
+    times 256*4 - ($-intr_stubs) dd 0   ; 全部置为0
 
 [section .text]
 

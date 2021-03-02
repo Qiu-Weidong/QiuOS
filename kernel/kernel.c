@@ -15,28 +15,101 @@ public uint64_t gdt[GDT_SIZE];    // gdt表
 public uint64_t idt[IDT_SIZE];    // idt表
 public uint64_t ldt[3];
 public process volatile *current_proc;
-public process proc;
 public task_state_segment tss;
-public uint8_t stack[1024];
 
-private
-void kernel_init();
+public uint8_t stack[16][1024];
+public process tasks[16];
 
 private 
-void test()
+void delay() NO_OPTIMIZE;
+private
+void delay()
 {
-    // dis_pos = 0;
-    puts("Hello QiuOS World!");
+    for(int i=0;i<1000;i++)
+        for(int j=0;j<1000;j++);
+    
+}
+
+int volatile cnt = 0;
+int a = 0,b=0,c=0,d=0;
+private 
+int usrprogA(int argc, char ** argv)
+{
+    dis_color = HIGHLIGHT | FG_CYAN;
+    puts("process A start!\n");
+    for(int i=0;i<100000;i++)
+    {
+        cli();
+        cnt++;
+        sti();
+    }
+    dis_color = HIGHLIGHT | FG_CYAN;
+    puts("process A end!\n");
+    a = 1;
+    if(a && b && c && d) putdec(cnt);
+    for(;;);
+}
+
+private 
+int usrprogB(int argc, char ** argv)
+{
+    dis_color = HIGHLIGHT | FG_MAGENTA;
+    puts("process B start!\n");
+    for(int i=0;i<100000;i++)
+    {
+        cli();
+        cnt++;
+        sti();
+    }
+    dis_color = HIGHLIGHT | FG_MAGENTA;
+    puts("process B end!\n");
+    b = 1;
+    if(a && b && c && d) putdec(cnt);
+    for(;;);
+}
+private
+int usrprogC(int argc, char ** argv)
+{
+    dis_color = HIGHLIGHT | FG_YELLOW;
+    puts("process C start!\n");
+    for(int i=0;i<100000;i++)
+    {
+        cli();
+        cnt++;
+        sti();
+    }
+    dis_color = HIGHLIGHT | FG_YELLOW;
+    puts("process C end!\n");
+    c = 1;
+    if(a && b && c && d) putdec(cnt);
+    for(;;);
+}
+private
+int usrprogD(int argc, char ** argv)
+{
+    dis_color = HIGHLIGHT | FG_GREEN;
+    puts("process D start!\n");
+    for(int i=0;i<100000;i++)
+    {
+        cli();
+        cnt++;
+        sti();
+    }
+    dis_color = HIGHLIGHT | FG_GREEN;
+    puts("process D end!\n");
+    d = 1;
+    if(a && b && c && d) putdec(cnt);
     for(;;);
 }
 
 public
 int kernel_main()
 {
-    set_color(HIGHLIGHT | FG_YELLOW | BG_BLACK);
-    kernel_init();
+    gdt_init();
+    idt_init();
 
-    
+    dis_color = HIGHLIGHT | FG_YELLOW | BG_BLACK;
+
     puts("Welcome to QiuOS World!\n");
 
     dis_color = HIGHLIGHT | FG_BLUE;
@@ -45,34 +118,18 @@ int kernel_main()
     ldt[1] = make_seg_desc(0, 0xfffff, DA_32 | DA_DRW | DA_DPL3 | DA_LIMIT_4K);
     ldt[2] = make_seg_desc(0xb8000, 0xffff, DA_32 | DA_DRW | DA_DPL3);
 
-    proc.pid = 0;
-    proc.priority = 0;
-    proc.sel_ldt = gdt_push_back(gdt, make_ldt_desc((uint32_t)ldt, sizeof(ldt) - 1, DA_32 | DA_DPL0));
-
-    proc.registers.cs = (0 << 3) + SA_RPL3 + SA_TIL;
-    proc.registers.ds = proc.registers.es = proc.registers.ss = proc.registers.fs = (1 << 3) + SA_RPL3 + SA_TIL;
-    proc.registers.gs = (2 << 3) + SA_RPL3 + SA_TIL;
-    // if 9     0001 0010 0000 0010 开中断 eflags |= 0x200
-    proc.registers.eflags = IOPL1_FLAG|INTR_FLAG|MBS_FLAG;
-
-    proc.registers.esp = (uint32_t)stack + 1024;
-    proc.registers.eip = (uint32_t)test;
-    start_process(&proc);
+    process * proc = create_process(usrprogA);
+    create_process(usrprogB);
+    create_process(usrprogC);
+    create_process(usrprogD);
     
+    tss.ss0 = SEL_KERNEL_DS;
+    ltr(SEL_TSS);
+
+    dis_pos = 0;
+    for(int i=0;i<25;i++)        
+        puts("                                                                        \n");
+    dis_pos = 0;
+    start_process(proc);
     shutdown();
-}
-
-private
-void kernel_init()
-{
-    gdt_init();
-    idt_init();
-
-    current_proc = &proc;
-
-    // tss只需要初始化ss0和esp0就可以了
-    tss.ss0 = SELECTOR_KERNEL_DS;
-    tss.esp0 = (uint32_t)(&current_proc->pid);
-
-    ltr(SELECTOR_KERNEL_TSS);
 }

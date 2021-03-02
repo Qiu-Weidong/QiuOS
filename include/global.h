@@ -5,15 +5,15 @@
 #include "tss.h"
 #include "proc.h"
 
+extern uint32_t volatile dis_pos ; 
+extern uint8_t volatile dis_color ; 
 extern uint64_t gdt[];
-extern task_state_segment tss;
 extern uint64_t idt[];
-extern intr_stub intr_stubs[];
-extern uint32_t volatile dis_pos ; // 从第15行开始显示
-extern uint8_t volatile dis_color ; // 默认颜色为白色高亮
 extern uint64_t ldt[];
 extern process volatile *current_proc;
-extern process proc;
+extern task_state_segment tss;
+extern uint8_t stack[][1024];
+extern process tasks[];
 
 
 #endif // QIUOS_GLOBAL_H_

@@ -1,12 +1,6 @@
 #ifndef QIUOS_CONST_H_
 #define QIUOS_CONST_H_
 
-#define NO_RETURN __attribute__ ((noreturn))
-#define UNUSED __attribute__ ((unused))
-#define NO_OPTIMIZE __attribute__((optimize("O0")))
-#define OPTIMIZE __attribute__((optimize("O2")))
-#define ALIGNED(n) __attribute__((aligned(n)))
-
 // 显示颜色相关
 // BL R G B I R G B
 #define HIGHLIGHT   0x08

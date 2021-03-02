@@ -6,6 +6,12 @@
 #define NULL ((void *)0)
 #define nullptr ((void *)0)
 
+#define NO_RETURN __attribute__ ((noreturn))
+#define UNUSED __attribute__ ((unused))
+#define NO_OPTIMIZE __attribute__((optimize("O0")))
+#define OPTIMIZE __attribute__((optimize("O2")))
+#define ALIGNED(n) __attribute__((aligned(n)))
+
 #define true 1
 #define false 0
 
@@ -26,6 +32,5 @@ typedef unsigned int        tid_t;
 
 typedef	void (*intr_stub)	();
 typedef int (*compare) (const void *,const void *);
-typedef int (*process_entry) (int argc, char ** argv);
 
 #endif // QIUOS_TYPE_H_

@@ -10,35 +10,35 @@
 #include "global.h"
 
 intr_handler intr_handlers[IDT_SIZE];
-
+extern intr_stub intr_stubs[IDT_SIZE];
 
 // 异常处理函数
 // 向量号 助记符 描述      类型         出错码  源
-void divide_error(const intr_frame *frame);          // 0      #DE   除法错     Fault       无     div和idiv指令
-void single_step_exception(const intr_frame *frame); // 1      #DB   调试异常   Fault/Trap  无     任何代码和数据的访问
-void nmi(const intr_frame *frame);                   // 2      -     非屏蔽中断 Interrupt   无     非屏蔽外部中断
-void breakpoint_exception(const intr_frame *frame);  // 3      #DP   调试断点   Trap        无     指令int 3
-void overflow(const intr_frame *frame);              // 4      #OF   溢出       Trap        无     指令into
-void bounds_check(const intr_frame *frame);          // 5      #BR   越界       Fault       无     指令bound
-void invalid_opcode(const intr_frame *frame);        // 6      #UD   无效操作码  Fault       无     指令ud2或无效指令
-void coproc_not_available(const intr_frame *frame);  // 7      #NM   设备不可用  Fault       无     浮点wait/fwait指令
-void double_fault(const intr_frame *frame);          // 8      #DF   双重错误    Abort       有(0)  所有能产生异常或NMI或INTR的指令
-void coproc_seg_overrun(const intr_frame *frame);    // 9            协处理器段越界 Fault     无     浮点指令
-void invalid_tss(const intr_frame *frame);           // 10     #TS  无效TSS      Fault       有     任务切换或访问TSS时
-void segment_not_present(const intr_frame *frame);   // 11     #NP  段不存在     Fault       有      加载段寄存器或访问系统段时
-void stack_exception(const intr_frame *frame);       // 12     #SS  堆栈段错误   Fault       有      堆栈操作或加载SS
-void general_protection(const intr_frame *frame);    // 13     #GP  一般保护错误 Fault       有       内存或其他保护检验
-void page_fault(const intr_frame *frame);            // 14     #PF  页错误      Fault       有        内存访问
+private void divide_error(const intr_frame *frame);          // 0      #DE   除法错     Fault       无     div和idiv指令
+private void single_step_exception(const intr_frame *frame); // 1      #DB   调试异常   Fault/Trap  无     任何代码和数据的访问
+private void nmi(const intr_frame *frame);                   // 2      -     非屏蔽中断 Interrupt   无     非屏蔽外部中断
+private void breakpoint_exception(const intr_frame *frame);  // 3      #DP   调试断点   Trap        无     指令int 3
+private void overflow(const intr_frame *frame);              // 4      #OF   溢出       Trap        无     指令into
+private void bounds_check(const intr_frame *frame);          // 5      #BR   越界       Fault       无     指令bound
+private void invalid_opcode(const intr_frame *frame);        // 6      #UD   无效操作码  Fault       无     指令ud2或无效指令
+private void coproc_not_available(const intr_frame *frame);  // 7      #NM   设备不可用  Fault       无     浮点wait/fwait指令
+private void double_fault(const intr_frame *frame);          // 8      #DF   双重错误    Abort       有(0)  所有能产生异常或NMI或INTR的指令
+private void coproc_seg_overrun(const intr_frame *frame);    // 9            协处理器段越界 Fault     无     浮点指令
+private void invalid_tss(const intr_frame *frame);           // 10     #TS  无效TSS      Fault       有     任务切换或访问TSS时
+private void segment_not_present(const intr_frame *frame);   // 11     #NP  段不存在     Fault       有      加载段寄存器或访问系统段时
+private void stack_exception(const intr_frame *frame);       // 12     #SS  堆栈段错误   Fault       有      堆栈操作或加载SS
+private void general_protection(const intr_frame *frame);    // 13     #GP  一般保护错误 Fault       有       内存或其他保护检验
+private void page_fault(const intr_frame *frame);            // 14     #PF  页错误      Fault       有        内存访问
                                                      // 15     intel保留未使用
-void coproc_error(const intr_frame *frame);          // 16     #MF  x87FPU浮点错 Fault       无       x87FPU浮点指令或wait/fwait指令
-void align_check(const intr_frame *frame);           // 17     #AC  对齐检查     Fault       有(0)    内存中的数据访问
-void machine_check(const intr_frame *frame);         // 18     #MC  Machine Check Abort     无
-void simd_exception(const intr_frame *frame);        // 19     #XF  SIMD浮点异常  Fault      无
+private void coproc_error(const intr_frame *frame);          // 16     #MF  x87FPU浮点错 Fault       无       x87FPU浮点指令或wait/fwait指令
+private void align_check(const intr_frame *frame);           // 17     #AC  对齐检查     Fault       有(0)    内存中的数据访问
+private void machine_check(const intr_frame *frame);         // 18     #MC  Machine Check Abort     无
+private void simd_exception(const intr_frame *frame);        // 19     #XF  SIMD浮点异常  Fault      无
 
-void default_handler(const intr_frame *frame); // 一个默认的异常处理程序
+private void default_handler(const intr_frame *frame); // 一个默认的异常处理程序
 
-void clock_handler(const intr_frame *frame);
-void keyboard_handler(const intr_frame *frame);
+private void clock_handler(const intr_frame *frame);
+private void keyboard_handler(const intr_frame *frame);
 
 public
 void idt_init()
@@ -48,7 +48,7 @@ void idt_init()
 
     // 开启键盘中断
     enable_irq(0);
-    enable_irq(1);
+    // enable_irq(1);
 
     const selector_t cs_selector = (1 << 3) + SA_RPL0 + SA_TIG;
 
@@ -62,7 +62,7 @@ void idt_init()
     for (int i = 0; i < IDT_SIZE; i++)
         intr_handlers[i] = default_handler;
     
-    intr_handlers[INT_VECTOR_IRQ0] = clock_handler;
+    intr_handlers[INT_VECTOR_IRQ0] = task_schedule;
     intr_handlers[INT_VECTOR_IRQ0+1] = keyboard_handler;
 
     uint16_t idt_ptr[3];
@@ -78,7 +78,7 @@ bool_t is_intr_on()
     return flags & INTR_FLAG;
 }
 
-const char *err_msg[] = {
+private const char *err_msg[] = {
     "#DE Divide Error",
     "#DB RESERVED",
     "--  NMI Interrupt",
@@ -101,7 +101,7 @@ const char *err_msg[] = {
     "#XF SIMD Floating-Point Exception"
 };
 
-void default_handler(const intr_frame *frame)
+private void default_handler(const intr_frame *frame)
 {
     puts("Exception! ---> ");
     if (frame->no_code.vec_no >= 0 && frame->no_code.vec_no < 20)
@@ -116,8 +116,10 @@ void default_handler(const intr_frame *frame)
     puts("EFLAGS:");
     puthex(frame->eflags);
     putln();
+    // hlt();
+    for(;;);
 }
-void clock_handler(const intr_frame * frame)
+private void clock_handler(const intr_frame * frame)
 {
     static unsigned int t = 0;
     t = (t+1)%1000;
@@ -125,7 +127,7 @@ void clock_handler(const intr_frame * frame)
     puts("clock!\n");
 }
 
-void keyboard_handler(const intr_frame * frame)
+private void keyboard_handler(const intr_frame * frame)
 {
     uint8_t scan_code = in_byte(0x60);
     puthex(scan_code);

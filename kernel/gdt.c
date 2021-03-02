@@ -12,19 +12,20 @@ void gdt_init()
     gdt[INDEX_FLAT_C] = make_seg_desc(0, 0xfffff, DA_DPL0 | DA_CR | DA_32 | DA_LIMIT_4K);
     gdt[INDEX_FLAT_RW] = make_seg_desc(0, 0xfffff, DA_32 | DA_DPL0 | DA_DRW | DA_LIMIT_4K);
     gdt[INDEX_VIDEO] = make_seg_desc(0xb8000, 0xffff, DA_DRW | DA_DPL3);
-    gdt[INDEX_KERNEL_TSS] = make_tss_desc((uint32_t)&tss, sizeof(tss) - 1, 0);
+    gdt[INDEX_TSS] = make_tss_desc((uint32_t)&tss, sizeof(tss) - 1, 0);
+    gdt[INDEX_LDT] = make_ldt_desc((uint32_t)ldt, sizeof(uint64_t)*3 - 1, DA_32 | DA_DPL0);
 
     uint16_t gdt_ptr[3];
-    *((uint16_t volatile *)gdt_ptr) = 5 * 8 - 1;
+    *((uint16_t volatile *)gdt_ptr) = 6 * 8 - 1;
     *((uint32_t volatile *)(gdt_ptr + 1)) = (uint32_t)gdt;
     lgdt(gdt_ptr);
 
     // 更新除cs外的段寄存器，由于我们新定义的gdt与loader中定义的一样，省略掉似乎也没事
-    set_ds(SELECTOR_KERNEL_DS);
-    set_es(SELECTOR_KERNEL_DS);
-    set_fs(SELECTOR_KERNEL_DS);
-    set_ss(SELECTOR_KERNEL_DS);
-    set_gs(SELECTOR_VIDEO);
+    set_ds(SEL_KERNEL_DS);
+    set_es(SEL_KERNEL_DS);
+    set_fs(SEL_KERNEL_DS);
+    set_ss(SEL_KERNEL_DS);
+    set_gs(SEL_VIDEO);
 }
 
 public

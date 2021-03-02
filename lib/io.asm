@@ -187,8 +187,4 @@ L5:
     pop ecx
     ret
 
-set_color:
-    mov dl, byte [esp+4]
-    mov al, byte [dis_color]
-    mov byte [dis_color],dl
-    ret
+

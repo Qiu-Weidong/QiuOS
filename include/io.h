@@ -3,8 +3,6 @@
 #include "type.h"
 
 public
-uint8_t set_color(unsigned char color);
-public
 void putchar(int c);
 public
 unsigned int puts(const char *str);
