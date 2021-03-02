@@ -24,9 +24,6 @@ uint8_t stack[1024];
 private
 void kernel_init();
 
-public 
-void start_process(process * proc);
-
 private 
 void test()
 {
@@ -40,9 +37,9 @@ int kernel_main()
     set_color(HIGHLIGHT | FG_YELLOW | BG_BLACK);
     kernel_init();
     puts("Welcome to QiuOS World!\n");
- 
-    dis_color = HIGHLIGHT | FG_BLUE;
 
+    dis_color = HIGHLIGHT | FG_BLUE;
+    
     ldt[0] = make_seg_desc(0, 0xfffff, DA_32 | DA_CR | DA_DPL3 | DA_LIMIT_4K); // 用户进程的代码段描述符
     ldt[1] = make_seg_desc(0, 0xfffff, DA_32 | DA_DRW | DA_DPL3 | DA_LIMIT_4K);
     ldt[2] = make_seg_desc(0xb8000, 0xffff, DA_32 | DA_DRW | DA_DPL3);

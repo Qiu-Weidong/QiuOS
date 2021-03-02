@@ -10,7 +10,7 @@
 
 uint64_t idt[IDT_SIZE];
 extern intr_stub intr_stubs[IDT_SIZE];
-intr_handler intr_handlers[IDT_SIZE];
+private intr_handler intr_handlers[IDT_SIZE];
 
 
 // 异常处理函数
@@ -127,7 +127,6 @@ void clock_handler(const intr_frame * frame)
 
 void keyboard_handler(const intr_frame * frame)
 {
-    // puts("B");
     uint8_t scan_code = in_byte(0x60);
     puthex(scan_code);
 }

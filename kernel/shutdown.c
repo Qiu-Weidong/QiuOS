@@ -16,6 +16,7 @@ void request_shutdown_port()
     const char * s = "Shutdown";
     for(const char * p = s; *p!='\0';p++)
         out_byte(0x8900, *p);
+    
 }
 
 public
@@ -23,7 +24,7 @@ void shutdown()
 {
     puts("Power off...\n");
 
-    // ACPI_power_off();
+    ACPI_power_off();
 
     request_shutdown_port();
     

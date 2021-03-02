@@ -3,7 +3,7 @@
 #include "type.h"
 #include "interrupt.h"
 
-
+typedef int (*process_func)(int , char **);
 typedef unsigned int pid_t;
 typedef unsigned int priority_t;
 
@@ -15,6 +15,16 @@ typedef struct process_control_block
     priority_t priority;        // 优先级 84
 }process;
 
+public 
+void start_process(process * proc);
 
+public 
+void restart_current_process();
+
+public 
+void task_schedule();
+
+public 
+process * create_process(process_func proc_main);
 
 #endif // QIUOS_PROC_H_

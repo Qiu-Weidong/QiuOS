@@ -2,6 +2,7 @@
 #define QIUOS_ASM_H_
 
 // 常用的内嵌汇编语句
+// 注意，为避免与int关键字同名，int指令声明为intr
 #define nop() __asm__ volatile("nop" ::)
 #define sti() __asm__ volatile("sti" ::)
 #define cli() __asm__ volatile("cli" ::)
@@ -13,7 +14,7 @@
 #define iret() __asm__ volatile("iret" ::)
 #define into() __asm__ volatile("into" ::)
 #define bound(dest, src) __asm__ volatile("boundl %0, (%1)" ::"r"(dest), "g"(src))
-#define int(n) __asm__ volatile("int %0" ::"g"(n))
+#define intr(n) __asm__ volatile("int %0" ::"g"(n))
 #define int3() __asm__ volatile("int3" ::)
 #define wait() __asm__ volatile("wait" ::)
 #define fwait() __asm__ volatile("fwait" ::)

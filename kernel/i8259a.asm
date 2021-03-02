@@ -4,8 +4,8 @@ INT_S_CTL	    equ	0xA0
 INT_S_CTLMASK	equ	0xA1	
 EOI		        equ	0x20
 
-%macro delay 0
-times 3 nop
+%macro delay 1
+    times %1 nop
 %endmacro
 [section .text]
 [global enable_irq]
@@ -17,44 +17,44 @@ times 3 nop
 init_8259a:
     mov al, 0xff
     out INT_M_CTLMASK, al
-    delay
+    delay 2
 
     out INT_S_CTLMASK, al 
-    delay
+    delay 2
 
     mov al, 0x11
     out INT_M_CTL, al
-    delay
+    delay 2
 
     out INT_S_CTL, al
-    delay
+    delay 2
 
     mov al, 0x20
     out INT_M_CTLMASK, al 
-    delay
+    delay 2
 
     mov al, 0x28
     out INT_S_CTLMASK, al 
-    delay
+    delay 2
 
     mov al, 0x04
     out INT_M_CTLMASK, al 
-    delay
+    delay 2
 
     mov al, 0x02
     out INT_S_CTLMASK, al 
-    delay
+    delay 2
 
     mov al, 0x01
     out INT_M_CTLMASK, al 
-    delay
+    delay 2
 
     out INT_S_CTLMASK, al 
-    delay
+    delay 2
 
     mov al, 0xff 
     out INT_M_CTLMASK, al
-    delay 
+    delay 2
 
     out INT_S_CTLMASK, al 
     ret
