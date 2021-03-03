@@ -64,42 +64,37 @@ init_8259a:
 ; void enable_irq(int irq)
 enable_irq:
     mov ecx, [esp+4]
+    push ebx
     pushf
     cli 
     mov ah, 0xfe
     rol ah, cl 
-    cmp cl, 8
-    jae enable_irq_slave
-enable_irq_master:
     mov dx, INT_M_CTLMASK
-    jmp enable_irq_exit
-enable_irq_slave:
-    mov dx, INT_S_CTLMASK
-
-enable_irq_exit:
+    mov bx, INT_S_CTLMASK
+    cmp cl, 8
+    cmovae dx, bx
     in al, dx
     and al, ah 
     out dx , al
     popf
+    pop ebx
     ret 
 
 ; void disable_irq(int irq)
 disable_irq:
     mov ecx, [esp+4]
+    push ebx
     pushf
     cli
     mov ah, 0x1
     rol ah, cl
-    cmp cl, 8
-    jae disable_irq_slave
-disable_irq_master:
     mov dx, INT_M_CTLMASK
-    jmp disable_irq_exit
-disable_irq_slave:
-    mov dx, INT_S_CTLMASK
-disable_irq_exit:
+    mov bx, INT_S_CTLMASK
+    cmp cl, 8
+    cmovae dx, bx
     in al, dx
     or al, ah
     out dx, al
     popf
+    pop ebx
     ret

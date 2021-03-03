@@ -3,7 +3,7 @@
 
 typedef struct
 {
-    volatile unsigned int value;
+    volatile int value;
 } atomic_t;
 
 static inline void atomic_add(atomic_t *v, int i)
@@ -87,12 +87,14 @@ static inline void atomic_xor(atomic_t *v, int i)
 
 static inline void atomic_not(atomic_t *v)
 {
+    // 将每一位取反
     __asm__ volatile("lock notl %0"
                      : "+m"(v->value));
 }
 
 static inline void atomic_neg(atomic_t *v)
 {
+    // 取反加一
     __asm__ volatile("lock negl %0"
                      : "+m"(v->value));
 }

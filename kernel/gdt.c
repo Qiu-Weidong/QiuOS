@@ -40,3 +40,11 @@ selector_t gdt_push_back(uint64_t *gdt, uint64_t desc)
     uint8_t dpl = (desc >> 45) & 0x3;
     return (i << 3) + dpl + SA_TIG;
 }
+
+public
+size_t gdt_size()
+{
+    uint16_t gdt_ptr[3];
+    sgdt(gdt_ptr);
+    return (gdt_ptr[0]+1) / sizeof(uint64_t);
+}

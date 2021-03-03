@@ -157,7 +157,6 @@ int kernel_main()
         puts("                                                                        \n");
     dis_pos = 0;
 
-
     atomic_set(&lock, 0);
     start_process(proc);
     shutdown();

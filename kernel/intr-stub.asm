@@ -99,6 +99,7 @@ intr_stubs:
     dd keyboard_stub                ;33 键盘中断
 
     times 0x90-33-1 dd 0
+    
     dd syscall_stub                 ;0x90 系统调用
 
     times 256*4 - ($-intr_stubs) dd 0   ; 全部置为0
@@ -134,18 +135,6 @@ keyboard_stub:              intr_stub 1
 
 ; 系统调用
 syscall_stub:               exception_stub intr_syscall
-    ; push intr_syscall
-    ; call save
-    ; ; 栈顶是intr_frame
-    ; sti 
-
-    ; ; 这里会调用syscall_handler(const intr_frame * );
-    ; call [intr_handlers + intr_syscall*4]
-    ; pop esi
-    ; mov [esi+44], eax
-
-    ; cli 
-    ; ret
 
 
 
