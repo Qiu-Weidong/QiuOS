@@ -9,6 +9,7 @@
 #include "tss.h"
 #include "proc.h"
 #include "atomic.h"
+#include "../include/syscall.h"
 
 public uint32_t volatile dis_pos = 2400; // 从第15行开始显示
 public uint8_t volatile dis_color = 0xf; // 默认颜色为白色高亮
@@ -49,6 +50,11 @@ int usrprogA(int argc, char ** argv)
     puts("process A end!\n");
     a = 1;
     if(a && b && c && d) putdec(cnt);
+    while(test_and_set(&lock));
+    puts("process A pid:");
+    puthex(getpid());
+    putln();
+    atomic_clear(&lock);
     for(;;);
 }
 
@@ -67,6 +73,11 @@ int usrprogB(int argc, char ** argv)
     puts("process B end!\n");
     b = 1;
     if(a && b && c && d) putdec(cnt);
+    while(test_and_set(&lock));
+    puts("process B pid:");
+    puthex(getpid());
+    putln();
+    atomic_clear(&lock);
     for(;;);
 }
 private
@@ -84,6 +95,11 @@ int usrprogC(int argc, char ** argv)
     puts("process C end!\n");
     c = 1;
     if(a && b && c && d) putdec(cnt);
+    while(test_and_set(&lock));
+    puts("process C pid:");
+    puthex(getpid());
+    putln();
+    atomic_clear(&lock);
     for(;;);
 }
 private
@@ -103,6 +119,12 @@ int usrprogD(int argc, char ** argv)
     puts("process D end!\n");
     d = 1;
     if(a && b && c && d) putdec(cnt);
+
+    while(test_and_set(&lock));
+    puts("process D pid:");
+    puthex(getpid());
+    putln();
+    atomic_clear(&lock);
     for(;;);
 }
 

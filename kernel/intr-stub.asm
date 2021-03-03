@@ -10,6 +10,8 @@ INT_M_CTLMASK	equ	0x21
 INT_S_CTL	    equ	0xA0	
 INT_S_CTLMASK	equ	0xA1	
 EOI		        equ	0x20
+; 与中断相关的常量
+intr_syscall    equ 0x90
 
 
 ; 全局变量
@@ -93,9 +95,11 @@ intr_stubs:
     times 31-20+1 dd 0
 
     ; 接下来是8259A外中断
-    dd clock_stub                   ;时钟中断32 
-    dd keyboard_stub                ;33键盘中断
+    dd clock_stub                   ;32 时钟中断 
+    dd keyboard_stub                ;33 键盘中断
 
+    times 0x90-33-1 dd 0
+    dd syscall_stub                 ;0x90 系统调用
 
     times 256*4 - ($-intr_stubs) dd 0   ; 全部置为0
 
@@ -125,6 +129,24 @@ simd_exception_stub:        exception_stub 19
 ; 中断桩
 clock_stub:                 intr_stub 0
 keyboard_stub:              intr_stub 1
+
+
+
+; 系统调用
+syscall_stub:               exception_stub intr_syscall
+    ; push intr_syscall
+    ; call save
+    ; ; 栈顶是intr_frame
+    ; sti 
+
+    ; ; 这里会调用syscall_handler(const intr_frame * );
+    ; call [intr_handlers + intr_syscall*4]
+    ; pop esi
+    ; mov [esi+44], eax
+
+    ; cli 
+    ; ret
+
 
 
 offset_of_retaddr   equ 48

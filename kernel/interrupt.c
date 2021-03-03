@@ -39,6 +39,7 @@ private void default_handler(const intr_frame *frame); // 一个默认的异常�
 
 private void clock_handler(const intr_frame *frame);
 private void keyboard_handler(const intr_frame *frame);
+void syscall_handler(intr_frame * frame);
 
 public
 void idt_init()
@@ -48,7 +49,6 @@ void idt_init()
 
     // 开启键盘中断
     enable_irq(0);
-    // enable_irq(1);
 
     const selector_t cs_selector = (1 << 3) + SA_RPL0 + SA_TIG;
 
@@ -64,6 +64,9 @@ void idt_init()
     
     intr_handlers[INT_VECTOR_IRQ0] = task_schedule;
     intr_handlers[INT_VECTOR_IRQ0+1] = keyboard_handler;
+
+    idt[INT_VECTOR_SYSCALL] = make_intr_gate(intr_stubs[INT_VECTOR_SYSCALL], cs_selector, 3);
+    intr_handlers[INT_VECTOR_SYSCALL] = syscall_handler;
 
     uint16_t idt_ptr[3];
     *((uint16_t volatile *)idt_ptr) = sizeof(uint64_t)*IDT_SIZE - 1;

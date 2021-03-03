@@ -85,9 +85,10 @@
 #define	INT_VECTOR_MACHINE_CHECK                0x12
 #define	INT_VECTOR_SIMD_EXCEPTION               0x13
 
-/* 中断向量 */
 #define	INT_VECTOR_IRQ0			0x20
 #define	INT_VECTOR_IRQ8			0x28
+
+#define INT_VECTOR_SYSCALL      0x90
 
 // eflags相关
 #define MBS_FLAG                0x2     // 必须设置(must be set)

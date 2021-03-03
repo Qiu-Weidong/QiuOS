@@ -45,25 +45,25 @@ uint64_t make_gate(intr_stub func, selector_t selector, uint8_t dcount, uint8_t 
 public
 uint64_t make_call_gate(intr_stub func, selector_t selector, uint8_t dcount, uint8_t dpl)
 {
-    uint8_t attr = ((dpl % 3) << 5) | DA_386CGate;
+    uint8_t attr = ((dpl % 4) << 5) | DA_386CGate;
     return make_gate(func, selector, dcount, attr);
 }
 public
 uint64_t make_trap_gate(intr_stub func, selector_t selector, uint8_t dpl)
 {
-    uint8_t attr = ((dpl % 3) << 5) | DA_386TGate;
+    uint8_t attr = ((dpl % 4) << 5) | DA_386TGate;
     return make_gate(func, selector, 0, attr);
 }
 public
 uint64_t make_intr_gate(intr_stub func, selector_t selector, uint8_t dpl)
 {
-    uint8_t attr = ((dpl % 3) << 5) | DA_386IGate;
+    uint8_t attr = ((dpl % 4) << 5) | DA_386IGate;
     return make_gate(func, selector, 0, attr);
 }
 public
 uint64_t make_task_gate(selector_t selector, uint8_t dpl)
 {
-    uint8_t attr = ((dpl % 3) << 5) | DA_TaskGate;
+    uint8_t attr = ((dpl % 4) << 5) | DA_TaskGate;
     return make_gate(nullptr, selector, 0, attr);
 }
 
