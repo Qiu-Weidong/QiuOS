@@ -3,47 +3,75 @@
 
 #include "type.h"
 
+static inline bool_t isalnum(char c)
+{
+    return isalpha(c) || isdigit(c);
+}
 
-public 
-bool_t isalnum(char c);
+static inline bool_t isalpha(char c)
+{
+    return islower(c) || isupper(c);
+}
 
-public 
-bool_t isalpha(char c);
+static inline bool_t iscntrl(char c)
+{
+    return c >= 0 && c < 32 || c == 127;
+}
 
-public
-bool_t iscntrl(char c);
+static inline bool_t isdigit(char c)
+{
+    return c >= '0' && c <= '9';
+}
 
-public 
-bool_t isdigit(char c);
+static inline bool_t isgraph(char c)
+{
+    return c > 32 && c < 127;
+}
 
-public 
-bool_t isgraph(char c);
+static inline bool_t islower(char c)
+{
+    return c >= 'a' && c <= 'z';
+}
 
-public 
-bool_t islower(char c);
+static inline bool_t isupper(char c)
+{
+    return c >= 'A' && c <= 'Z';
+}
 
-public
-bool_t isupper(char c);
+static inline bool_t isprint(char c)
+{
+    return c >= 32 && c < 127;
+}
 
-public 
-bool_t isprint(char c);
+static inline bool_t ispunct(char c)
+{
+    return isprint(c) && !isalnum(c) && !isspace(c);
+}
 
-public 
-bool_t ispunct(char c);
+static inline bool_t isspace(char c)
+{
+    return c == ' ' || c == '\f' || c == '\n' || c == '\r' ||
+           c == '\t' || c == '\v';
+}
 
-public 
-bool_t isascii(char c);
+static inline bool_t isascii(char c)
+{
+    return c >= 0 && c < 128;
+}
 
-public
-bool_t isspace(char c);
+static inline char toascii(char c)
+{
+    return c & 0x7f;
+}
 
-public 
-char toascii(char c);
+static inline char tolower(char c)
+{
+    return isupper(c) ? c - 'A' + 'a' : c;
+}
 
-public 
-char tolower(char c);
-
-public 
-char toupper(char c);
+static inline char toupper(char c)
+{
+    return islower(c) ? c - 'a' + 'A' : c;
+}
 
 #endif // QIUOS_CTYPE_H_

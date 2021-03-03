@@ -8,6 +8,7 @@
 #include "asm.h"
 #include "tss.h"
 #include "proc.h"
+#include "atomic.h"
 
 public uint32_t volatile dis_pos = 2400; // 从第15行开始显示
 public uint8_t volatile dis_color = 0xf; // 默认颜色为白色高亮
@@ -31,6 +32,7 @@ void delay()
 }
 
 int volatile cnt = 0;
+atomic_t lock;
 int a = 0,b=0,c=0,d=0;
 private 
 int usrprogA(int argc, char ** argv)
@@ -39,9 +41,9 @@ int usrprogA(int argc, char ** argv)
     puts("process A start!\n");
     for(int i=0;i<100000;i++)
     {
-        cli();
+        while(test_and_set(&lock));
         cnt++;
-        sti();
+        atomic_clear(&lock);
     }
     dis_color = HIGHLIGHT | FG_CYAN;
     puts("process A end!\n");
@@ -57,9 +59,9 @@ int usrprogB(int argc, char ** argv)
     puts("process B start!\n");
     for(int i=0;i<100000;i++)
     {
-        cli();
+        while(test_and_set(&lock));
         cnt++;
-        sti();
+        atomic_clear(&lock);
     }
     dis_color = HIGHLIGHT | FG_MAGENTA;
     puts("process B end!\n");
@@ -74,9 +76,9 @@ int usrprogC(int argc, char ** argv)
     puts("process C start!\n");
     for(int i=0;i<100000;i++)
     {
-        cli();
+        while(test_and_set(&lock));
         cnt++;
-        sti();
+        atomic_clear(&lock);
     }
     dis_color = HIGHLIGHT | FG_YELLOW;
     puts("process C end!\n");
@@ -91,9 +93,11 @@ int usrprogD(int argc, char ** argv)
     puts("process D start!\n");
     for(int i=0;i<100000;i++)
     {
-        cli();
+        // test_and_set(&lock);
+        while(test_and_set(&lock))
+            ;
         cnt++;
-        sti();
+        atomic_clear(&lock);
     }
     dis_color = HIGHLIGHT | FG_GREEN;
     puts("process D end!\n");
@@ -130,6 +134,9 @@ int kernel_main()
     for(int i=0;i<25;i++)        
         puts("                                                                        \n");
     dis_pos = 0;
+
+
+    atomic_set(&lock, 0);
     start_process(proc);
     shutdown();
 }
