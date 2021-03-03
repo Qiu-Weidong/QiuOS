@@ -37,8 +37,9 @@ private void simd_exception(const intr_frame *frame);        // 19     #XF  SIMD
 
 private void default_handler(const intr_frame *frame); // 一个默认的异常处理程序
 
-private void clock_handler(const intr_frame *frame);
-private void keyboard_handler(const intr_frame *frame);
+
+void task_schedule(const intr_frame *frame UNUSED);
+void keyboard_handler(const intr_frame *frame UNUSED);
 void syscall_handler(intr_frame * frame);
 
 public
@@ -49,6 +50,7 @@ void idt_init()
 
     // 开启键盘中断
     enable_irq(0);
+    enable_irq(1);
 
     const selector_t cs_selector = (1 << 3) + SA_RPL0 + SA_TIG;
 
@@ -122,16 +124,5 @@ private void default_handler(const intr_frame *frame)
     // hlt();
     for(;;);
 }
-private void clock_handler(const intr_frame * frame)
-{
-    static unsigned int t = 0;
-    t = (t+1)%1000;
-    if(t == 400)
-    puts("clock!\n");
-}
 
-private void keyboard_handler(const intr_frame * frame)
-{
-    uint8_t scan_code = in_byte(0x60);
-    puthex(scan_code);
-}
+

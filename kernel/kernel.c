@@ -125,6 +125,7 @@ int usrprogD(int argc, char ** argv)
     puthex(getpid());
     putln();
     atomic_clear(&lock);
+    halt();
     for(;;);
 }
 

@@ -5,7 +5,7 @@
 
 
 public 
-void task_schedule()
+void task_schedule(const intr_frame *frame UNUSED)
 {
     current_proc++;
     if(current_proc >= tasks+4)

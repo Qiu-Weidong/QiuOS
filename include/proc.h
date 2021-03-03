@@ -22,7 +22,7 @@ public
 void restart_current_process() NO_RETURN;
 
 public 
-void task_schedule();
+void task_schedule(const intr_frame *frame UNUSED);
 
 public 
 process * create_process(process_func proc_main);
