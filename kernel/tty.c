@@ -1,7 +1,8 @@
 #include "tty.h"
 #include "io.h"
-
-tty _tty;
+#include "global.h"
+#include "../include/stdio.h"
+// tty _tty;
 
 
 public
@@ -11,6 +12,9 @@ void task_tty()
     tty_init(&_tty);
     console_init(&_tty.csl,0x0, 0x4000);
 
+    char msg[] = "QiuOS";
+    printf("hello %s world!\n",msg);
+    
     while (true)
     {
         uint32_t key = keyboard_read();
@@ -58,4 +62,5 @@ public
 void tty_init(tty *tty)
 {
     console_init(&tty->csl, 0x0, 0x4000);
+    atomic_clear(&tty->lock);
 }

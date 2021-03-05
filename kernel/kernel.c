@@ -23,6 +23,7 @@ public task_state_segment tss;
 
 public uint8_t stack[16][1024];
 public process tasks[16];
+tty _tty;
 
 int volatile cnt = 0;
 atomic_t lock;
@@ -30,23 +31,14 @@ int a = 0,b=0,c=0,d=0;
 private 
 int usrprogA(int argc, char ** argv)
 {
-    dis_color = HIGHLIGHT | FG_CYAN;
-    puts("process A start!\n");
-    for(int i=0;i<100000;i++)
-    {
-        while(test_and_set(&lock));
-        cnt++;
-        atomic_clear(&lock);
-    }
-    dis_color = HIGHLIGHT | FG_CYAN;
-    puts("process A end!\n");
-    a = 1;
-    if(a && b && c && d) putdec(cnt);
-    while(test_and_set(&lock));
-    puts("process A pid:");
-    puthex(getpid());
-    putln();
-    atomic_clear(&lock);
+    char msg[] = "QiuOS";
+    // printf("hello %s world!\n",msg);
+    // printf("put a char %c\n",'*');
+    int x = 0x3f3f3f3f;
+    printf("hex : %x\n",x);
+    printf("dec : %d\n",x);
+    printf("oct : %o\n",x);
+    // printf("bin : %b\n")
     for(;;);
 }
 
@@ -128,9 +120,6 @@ int kernel_main()
     idt_init();
 
     // console_init(&csl,0x2A00, 0x2600);
-    int x = 5;
-    int y = 7;
-    printf("%x %x",x,y);
 
     dis_color = HIGHLIGHT | FG_YELLOW | BG_BLACK;
 
@@ -142,7 +131,7 @@ int kernel_main()
     ldt[1] = make_seg_desc(0, 0xfffff, DA_32 | DA_DRW | DA_DPL3 | DA_LIMIT_4K);
     ldt[2] = make_seg_desc(0xb8000, 0xffff, DA_32 | DA_DRW | DA_DPL3);
 
-    process * proc = create_process(task_tty);
+    process * proc = create_process(usrprogA);
     // create_process(usrprogB);
     // create_process(usrprogC);
     // create_process(usrprogD);
@@ -150,8 +139,9 @@ int kernel_main()
     tss.ss0 = SEL_KERNEL_DS;
     ltr(SEL_TSS);
 
-    // atomic_set(&lock, 0);
-    dis_pos = 160;
+    tty_init(&_tty);
+    console_init(&_tty.csl,0x0, 0x4000);
+
     start_process(proc);
     shutdown();
 }

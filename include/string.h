@@ -43,7 +43,7 @@ void *memset(void *dest, int value, size_t size);
 /// @return str的长度
 //////////////////////////////////////////////////////
 public
-size_t strlen(char *str);
+size_t strlen(const char *str);
 
 //////////////////////////////////////////////////////
 /// @brief 计算字符串的长度，如果小于maxlen则返回实际
@@ -53,7 +53,7 @@ size_t strlen(char *str);
 /// @return str的长度或maxlen
 //////////////////////////////////////////////////////
 public
-size_t strnlen(char *str, size_t maxlen);
+size_t strnlen(const char *str, size_t maxlen);
 
 //////////////////////////////////////////////////////
 /// @brief 将src指向的字符串复制到dest

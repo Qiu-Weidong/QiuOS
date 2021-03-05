@@ -12,7 +12,7 @@
 #define va_copy(DST, SRC) __builtin_va_copy(DST, SRC)
 
 /* Standard functions. */
-int printf(const char *, ...) PRINTF_FORMAT(1, 2);
-int vsnprintf(char *, size_t, const char *, va_list) PRINTF_FORMAT(3, 0);
+size_t printf(const char *, ...) PRINTF_FORMAT(1, 2);
+size_t vsnprintf(char *, size_t, const char *, va_list) PRINTF_FORMAT(3, 0);
 
 #endif // QIUOS_STDIO_H_

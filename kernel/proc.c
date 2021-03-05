@@ -27,6 +27,8 @@ process * create_process(process_func proc_main)
     proc->registers.eflags = IOPL3_FLAG|INTR_FLAG|MBS_FLAG;
     proc->registers.esp = (uint32_t)(stack[next_pid])+1024;
     proc->registers.eip = (uint32_t)proc_main;
+
+    proc->p_tty = &_tty;
     next_pid++;
     return proc;
 }

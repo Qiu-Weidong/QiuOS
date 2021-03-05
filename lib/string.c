@@ -18,3 +18,17 @@ void *memset(void *dest, int value, size_t size)
     return dest;
 }
 
+public
+size_t strlen(const char *str)
+{
+    size_t size = 0;
+    while(*str++) size++;
+    return size;
+}
+
+public
+char *strcpy(char *dest, const char *src)
+{
+    while(*src) *dest++ = *src++;
+    return dest;
+}

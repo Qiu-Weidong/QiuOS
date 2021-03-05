@@ -6,6 +6,9 @@ public
 int atoi(const char *);
 
 public 
+char * itoa(char * , int num, int);
+
+public 
 void *qsort(void * array, size_t cnt, size_t size,compare cmp);
 
 public

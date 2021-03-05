@@ -20,6 +20,18 @@ pid_t sys_getpid()
     return current_proc->pid;
 }
 
+private 
+size_t sys_write(filedesc_t fd, const void * buffer, size_t size)
+{
+    tty * p_tty = current_proc->p_tty;
+    while(test_and_set(&p_tty->lock))
+        ;
+    for(int i=0;i<size;i++) screen_putc(&p_tty->csl,((char *)buffer)[i]);
+
+    atomic_clear(&p_tty->lock);
+    return size;
+}
+
 public 
 void syscall_handler(intr_frame * frame)
 {
@@ -33,6 +45,9 @@ void syscall_handler(intr_frame * frame)
         break;
     case _NR_getpid:
         frame->eax = sys_getpid();
+        break;
+    case _NR_write:
+        frame->eax = sys_write(frame->ebx, (const void *)frame->ecx, frame->edx);
         break;
     default:
         break;

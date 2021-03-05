@@ -15,5 +15,7 @@ extern task_state_segment tss;
 extern uint8_t stack[][1024];
 extern process tasks[];
 
+extern tty _tty;
+
 
 #endif // QIUOS_GLOBAL_H_

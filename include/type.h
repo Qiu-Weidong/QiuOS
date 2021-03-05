@@ -30,6 +30,7 @@ typedef unsigned int        size_t;
 typedef unsigned short      selector_t;
 typedef unsigned int        pid_t;
 typedef unsigned int        tid_t;
+typedef unsigned int        filedesc_t;
 typedef __builtin_va_list   va_list;
 
 typedef	void (*intr_stub)	();
