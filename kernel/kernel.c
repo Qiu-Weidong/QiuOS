@@ -10,6 +10,7 @@
 #include "proc.h"
 #include "atomic.h"
 #include "../include/syscall.h"
+#include "console.h"
 
 public uint32_t volatile dis_pos = 2400; // 从第15行开始显示
 public uint8_t volatile dis_color = 0xf; // 默认颜色为白色高亮
@@ -21,6 +22,8 @@ public task_state_segment tss;
 
 public uint8_t stack[16][1024];
 public process tasks[16];
+
+console csl;
 
 private 
 void delay() NO_OPTIMIZE;
@@ -125,15 +128,27 @@ int usrprogD(int argc, char ** argv)
     puthex(getpid());
     putln();
     atomic_clear(&lock);
-    halt();
+    screen_clear(&csl);
+    screen_putc(&csl,'h');
+    screen_putc(&csl, 'e');
+    screen_putc(&csl, 'l');
+    screen_putc(&csl, 'l');
+    screen_putc(&csl, 'o');
+    screen_putc(&csl, '\n');
+    screen_putc(&csl, 'w');
+    screen_putc(&csl, 'o');
+    screen_putc(&csl, '\b');
     for(;;);
 }
+
 
 public
 int kernel_main()
 {
     gdt_init();
     idt_init();
+
+    console_init(&csl,0x2A00, 0x2600);
 
     dis_color = HIGHLIGHT | FG_YELLOW | BG_BLACK;
 
@@ -153,10 +168,10 @@ int kernel_main()
     tss.ss0 = SEL_KERNEL_DS;
     ltr(SEL_TSS);
 
-    dis_pos = 0;
-    for(int i=0;i<25;i++)        
-        puts("                                                                        \n");
-    dis_pos = 0;
+    // dis_pos = 0;
+    // for(int i=0;i<25;i++)        
+    //     puts("                                                                        \n");
+    // dis_pos = 0;
 
     atomic_set(&lock, 0);
     start_process(proc);

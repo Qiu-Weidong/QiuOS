@@ -90,6 +90,8 @@
 
 #define INT_VECTOR_SYSCALL      0x90
 
+#define KEYBOARD_IRQ            0x1
+
 // eflags相关
 #define MBS_FLAG                0x2     // 必须设置(must be set)
 #define CARRY_FLAG              0x1     // 进位标志

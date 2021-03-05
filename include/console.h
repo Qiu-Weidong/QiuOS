@@ -16,6 +16,13 @@
  * 0xBAA00      0xBD400-1     0x2A00
  * 0xBD400      0xC0000-1     0x2C00
 */
+/*
+ * 换算后
+ * 起始地址     结束地址    长度
+ * 0            0x1500      0x1500
+ * 0x1500       0x2A00      0x1500
+ * 0x2A00       0x5000      0x2600
+*/
 
 typedef struct s_console
 {
@@ -38,5 +45,20 @@ typedef struct s_console
 #define	CURSOR_L	    0xF	    /* reg index of cursor position (LSB) */
 #define	V_MEM_BASE	    0xB8000	/* base of color video memory */
 #define	V_MEM_SIZE	    0x8000	/* 32K: B8000H -> BFFFFH */
+
+public
+void scroll_down(console * con, int n);
+
+public
+void scroll_up(console *con, int n);
+
+public 
+void screen_clear(console * csl);
+
+public
+void screen_putc(console *csl, char c);
+
+public 
+void console_init(console *csl, uint32_t base, uint32_t limit);
 
 #endif // QIUOS_CONSOLE_H_

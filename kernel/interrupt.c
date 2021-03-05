@@ -8,6 +8,7 @@
 #include "asm.h"
 #include "const.h"
 #include "global.h"
+#include "keyboard.h"
 
 intr_handler intr_handlers[IDT_SIZE];
 extern intr_stub intr_stubs[IDT_SIZE];
@@ -50,7 +51,8 @@ void idt_init()
 
     // 开启键盘中断
     enable_irq(0);
-    enable_irq(1);
+    // enable_irq(1);
+    keyboard_init();
 
     const selector_t cs_selector = (1 << 3) + SA_RPL0 + SA_TIG;
 
@@ -68,7 +70,7 @@ void idt_init()
     intr_handlers[INT_VECTOR_IRQ0+1] = keyboard_handler;
 
     idt[INT_VECTOR_SYSCALL] = make_intr_gate(intr_stubs[INT_VECTOR_SYSCALL], cs_selector, 3);
-    intr_handlers[INT_VECTOR_SYSCALL] = syscall_handler;
+    intr_handlers[INT_VECTOR_SYSCALL] = (void (*)(const intr_frame *))syscall_handler;
 
     uint16_t idt_ptr[3];
     *((uint16_t volatile *)idt_ptr) = sizeof(uint64_t)*IDT_SIZE - 1;
