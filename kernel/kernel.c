@@ -10,7 +10,8 @@
 #include "proc.h"
 #include "atomic.h"
 #include "../include/syscall.h"
-#include "console.h"
+#include "../include/stdio.h"
+#include "tty.h"
 
 public uint32_t volatile dis_pos = 2400; // 从第15行开始显示
 public uint8_t volatile dis_color = 0xf; // 默认颜色为白色高亮
@@ -22,18 +23,6 @@ public task_state_segment tss;
 
 public uint8_t stack[16][1024];
 public process tasks[16];
-
-console csl;
-
-private 
-void delay() NO_OPTIMIZE;
-private
-void delay()
-{
-    for(int i=0;i<1000;i++)
-        for(int j=0;j<1000;j++);
-    
-}
 
 int volatile cnt = 0;
 atomic_t lock;
@@ -128,16 +117,6 @@ int usrprogD(int argc, char ** argv)
     puthex(getpid());
     putln();
     atomic_clear(&lock);
-    screen_clear(&csl);
-    screen_putc(&csl,'h');
-    screen_putc(&csl, 'e');
-    screen_putc(&csl, 'l');
-    screen_putc(&csl, 'l');
-    screen_putc(&csl, 'o');
-    screen_putc(&csl, '\n');
-    screen_putc(&csl, 'w');
-    screen_putc(&csl, 'o');
-    screen_putc(&csl, '\b');
     for(;;);
 }
 
@@ -148,7 +127,10 @@ int kernel_main()
     gdt_init();
     idt_init();
 
-    console_init(&csl,0x2A00, 0x2600);
+    // console_init(&csl,0x2A00, 0x2600);
+    int x = 5;
+    int y = 7;
+    printf("%x %x",x,y);
 
     dis_color = HIGHLIGHT | FG_YELLOW | BG_BLACK;
 
@@ -160,20 +142,16 @@ int kernel_main()
     ldt[1] = make_seg_desc(0, 0xfffff, DA_32 | DA_DRW | DA_DPL3 | DA_LIMIT_4K);
     ldt[2] = make_seg_desc(0xb8000, 0xffff, DA_32 | DA_DRW | DA_DPL3);
 
-    process * proc = create_process(usrprogA);
-    create_process(usrprogB);
-    create_process(usrprogC);
-    create_process(usrprogD);
+    process * proc = create_process(task_tty);
+    // create_process(usrprogB);
+    // create_process(usrprogC);
+    // create_process(usrprogD);
     
     tss.ss0 = SEL_KERNEL_DS;
     ltr(SEL_TSS);
 
-    // dis_pos = 0;
-    // for(int i=0;i<25;i++)        
-    //     puts("                                                                        \n");
-    // dis_pos = 0;
-
-    atomic_set(&lock, 0);
+    // atomic_set(&lock, 0);
+    dis_pos = 160;
     start_process(proc);
     shutdown();
 }

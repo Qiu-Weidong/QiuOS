@@ -7,15 +7,15 @@
 
 typedef struct s_tty
 {
+    console csl;                            // 控制台
     char input_buffer[INPUT_BUFFER_SIZE];   // 输入缓冲区
-    console * p_console;                    // 控制台
 }tty;
 
 public 
 void task_tty();
 
 public 
-void tty_init();
+void tty_init(tty * tty);
 
 
 #endif // QIUOS_TTY_H_

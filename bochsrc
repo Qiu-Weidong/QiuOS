@@ -15,7 +15,7 @@ floppya:1_44=QiuOS.img, status=inserted
 boot: floppy 
 
 # 日志文件
-# log: bochsout.txt
+log: bochsout.txt
 
 # 是否使用鼠标
 mouse: enabled=0

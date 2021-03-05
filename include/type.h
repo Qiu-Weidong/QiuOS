@@ -11,6 +11,7 @@
 #define NO_OPTIMIZE __attribute__((optimize("O0")))
 #define OPTIMIZE __attribute__((optimize("O2")))
 #define ALIGNED(n) __attribute__((aligned(n)))
+#define PRINTF_FORMAT(FMT, FIRST) __attribute__ ((format (printf, FMT, FIRST)))
 
 #define true 1
 #define false 0
@@ -29,6 +30,7 @@ typedef unsigned int        size_t;
 typedef unsigned short      selector_t;
 typedef unsigned int        pid_t;
 typedef unsigned int        tid_t;
+typedef __builtin_va_list   va_list;
 
 typedef	void (*intr_stub)	();
 typedef int (*compare) (const void *,const void *);

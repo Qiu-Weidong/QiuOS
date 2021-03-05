@@ -25,29 +25,30 @@ void set_video_start_addr(uint32_t addr)
 }
 
 private
-void flush(console *con)
+void flush(console *csl)
 {
-    set_cursor(con->cursor);
-    set_video_start_addr(con->current_start_addr);
+    set_cursor(csl->cursor);
+    set_video_start_addr(csl->current_start_addr);
 }
 
 /*
  * 向上滚动n行
 */
 public
-void scroll_up(console *con, int n)
+void scroll_up(console *csl, int n)
 {
-    con->current_start_addr -= SCREEN_WIDTH * n;
-    con->current_start_addr = con->current_start_addr > con->original_addr ? con->current_start_addr : con->original_addr;
-    flush(con);
+    if(csl->current_start_addr >= SCREEN_WIDTH * n)
+        csl->current_start_addr -= SCREEN_WIDTH * n;
+    csl->current_start_addr = csl->current_start_addr > csl->original_addr ? csl->current_start_addr : csl->original_addr;
+    flush(csl);
 }
 
 public
-void scroll_down(console *con, int n)
+void scroll_down(console *csl, int n)
 {
-    con->current_start_addr += SCREEN_WIDTH * n;
-    con->current_start_addr = con->current_start_addr < con->original_addr + con->v_mem_limit ? con->current_start_addr : con->original_addr + con->v_mem_limit;
-    flush(con);
+    csl->current_start_addr += SCREEN_WIDTH * n;
+    csl->current_start_addr = csl->current_start_addr < csl->original_addr + csl->v_mem_limit ? csl->current_start_addr : csl->original_addr + csl->v_mem_limit;
+    flush(csl);
 }
 
 public
@@ -84,7 +85,7 @@ void screen_putc(console *csl, char c)
         *p_mem = (' ' | 0xf00);
         csl->cursor--;
     }
-    else if (csl->cursor < csl->original_addr + csl->v_mem_limit - 1)
+    else if (c != '\b' && c != '\n' && csl->cursor < csl->original_addr + csl->v_mem_limit - 1)
     {
         *p_mem = (c | 0xf00);
         csl->cursor++;
@@ -101,4 +102,6 @@ void console_init(console *csl, uint32_t base, uint32_t limit)
 {
     csl->current_start_addr = csl->cursor = csl->current_start_addr = base;
     csl->v_mem_limit = limit;
+    screen_clear(csl);
+    flush(csl);
 }

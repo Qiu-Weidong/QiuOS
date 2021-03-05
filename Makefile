@@ -11,7 +11,7 @@ BXIMG		:= bximage
 # 参数
 BOOTFLAGS	:= -I ./boot/include/
 ASMFLAGS	:= -f elf -I include/ -g -F DWARF
-CFLAGS		:= -I include/ -m32 -c -fno-builtin -fno-stack-protector -O2 -g
+CFLAGS		:= -I include/ -m32 -c -fno-builtin -fno-stack-protector -g
 LDFLAGS		:= -Ttext 0x10400 -e kernel_main -m elf_i386
 GDBFLAGS	:= -q -ex "target remote localhost:1234" 		\
 						-ex "set disassembly-flavor intel" 	\

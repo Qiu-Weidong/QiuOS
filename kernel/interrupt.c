@@ -50,9 +50,9 @@ void idt_init()
     init_8259a();
 
     // 开启键盘中断
-    enable_irq(0);
+    // enable_irq(0);
     // enable_irq(1);
-    keyboard_init();
+    // keyboard_init();
 
     const selector_t cs_selector = (1 << 3) + SA_RPL0 + SA_TIG;
 
