@@ -39,6 +39,8 @@ int usrprogA(int argc, char ** argv)
     printf("dec : %d\n",x);
     printf("oct : %o\n",x);
     // printf("bin : %b\n")
+    // assert(0);
+    panic("fatal error!");
     for(;;);
 }
 
@@ -141,6 +143,10 @@ int kernel_main()
 
     tty_init(&_tty);
     console_init(&_tty.csl,0x0, 0x4000);
+
+
+    // assert(0);
+
 
     start_process(proc);
     shutdown();

@@ -1,6 +1,7 @@
 #include "../include/stdio.h"
 #include "../include/string.h"
 #include "../include/stdlib.h"
+#include "const.h"
 
 
 size_t write(filedesc_t , void *, size_t);
@@ -58,15 +59,15 @@ size_t vsnprintf(char *buffer, size_t size, const char *format, va_list list)
             break;
         case 'x':
             type.s32 = va_arg(next_arg, int);
-            p = itoa(p,type.s32,16);
+            p = itoa(p,type.s32,16)-1;
             break;
         case 'd':
             type.s32 = va_arg(next_arg, int);
-            p = itoa(p,type.s32,10);
+            p = itoa(p,type.s32,10)-1;
             break;
         case 'o':
             type.s32 = va_arg(next_arg, int);
-            p = itoa(p,type.s32,8);
+            p = itoa(p,type.s32,8)-1;
             break;
         case 'c':
             type.s8 = va_arg(next_arg, int);
@@ -87,6 +88,20 @@ size_t vsnprintf(char *buffer, size_t size, const char *format, va_list list)
             break;
         }
     }
-
+    // *p++ = '\0';
     return p - buffer;
 }
+
+public
+void panic(const char *fmt,...)
+{
+    char buf[256];
+    va_list args;
+    va_start(args, fmt);
+    size_t size = vsnprintf(buf, 256, fmt, args);
+    va_end(args);
+    buf[size] = '\0';
+    printf("%c >>panic<< %s", MAG_CH_PANIC, buf);
+    for(;;);
+}
+

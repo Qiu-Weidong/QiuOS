@@ -15,4 +15,7 @@
 size_t printf(const char *, ...) PRINTF_FORMAT(1, 2);
 size_t vsnprintf(char *, size_t, const char *, va_list) PRINTF_FORMAT(3, 0);
 
+public
+void panic(const char * fmt, ...);
+
 #endif // QIUOS_STDIO_H_

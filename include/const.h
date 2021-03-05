@@ -115,4 +115,8 @@
 #define VIP_FLAG                0x100000 // 虚拟中断标志
 #define ID_FLAG                 0x200000 // 判断CPU是否支持CPUID指令
 
+
+#define MAG_CH_PANIC	'\002'
+#define MAG_CH_ASSERT	'\003'
+
 #endif // QIUOS_CONST_H_

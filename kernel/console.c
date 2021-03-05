@@ -85,6 +85,7 @@ void screen_putc(console *csl, char c)
         *p_mem = (' ' | 0xf00);
         csl->cursor--;
     }
+    else if(c == '\0'){}
     else if (c != '\b' && c != '\n' && csl->cursor < csl->original_addr + csl->v_mem_limit - 1)
     {
         *p_mem = (c | 0xf00);

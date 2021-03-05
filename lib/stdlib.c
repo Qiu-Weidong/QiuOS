@@ -8,7 +8,7 @@ char * itoa(char * buffer, int num, int scale)
     else if(scale == 8) *q++ = '0';
     else if(scale == 16) *q++ = '0', *q++ = 'x';
     else if(scale == 10 && num < 0) *q++ = '-', num = -num;
-    
+
     char tmp[16];
     char *p = tmp;
     while(num)
@@ -21,6 +21,8 @@ char * itoa(char * buffer, int num, int scale)
     
 
     while(p!=tmp) *q++ = *--p;
+    *q++ = '\0';
     return q;
 }
+
 
