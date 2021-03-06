@@ -31,6 +31,12 @@ size_t sys_write(filedesc_t fd, const void * buffer, size_t size)
     atomic_clear(&p_tty->lock);
     return size;
 }
+private
+int sys_sendrec(int function, int src_dest, message * msg, process* p)
+{
+    sys_write(1, "sys_sendrec",11);
+    return 0;
+}
 
 public 
 void syscall_handler(intr_frame * frame)
@@ -48,6 +54,10 @@ void syscall_handler(intr_frame * frame)
         break;
     case _NR_write:
         frame->eax = sys_write(frame->ebx, (const void *)frame->ecx, frame->edx);
+        break;
+    
+    case _NR_sendrec:
+        frame->eax = sys_sendrec(frame->ebx, frame->ecx, frame->edx,(process *)frame);
         break;
     default:
         break;

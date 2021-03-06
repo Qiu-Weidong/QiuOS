@@ -18,17 +18,20 @@ intr_syscall    equ 0x90
 [extern intr_handlers   ]
 [extern current_proc    ]
 [extern tss             ]
+[extern k_reenter       ]
 
-; 导入函数
-[extern restart_current_process]
+[global start_process]
 
 ; 有错误码的异常桩
 ; exception_stub(int vec_no, has_err_code);
 %macro exception_stub 2
     call save
 
+    sti 
     call [intr_handlers+4*%1]
     add esp, 4
+    cli
+
     ret 
 %endmacro
 
@@ -36,12 +39,14 @@ intr_syscall    equ 0x90
 ; exception_stub(int vec_no);
 %macro exception_stub 1
     push %1                     ; 将中断号压栈
-
     call save
-
+    
+    sti
     call [intr_handlers+4*%1]
     ; mov esp, [esp]              ; 将esp指向要调度进程intr_frame的起始位置, 这里还是原来的进程
     add esp, 4
+    cli
+    
     ret 
 %endmacro
 
@@ -58,8 +63,10 @@ intr_syscall    equ 0x90
     mov al, EOI
     out INT_M_CTL, al
 
+    sti 
     call [intr_handlers+4*%1+32*4]
     add esp, 4
+    cli 
 
     in al, INT_M_CTLMASK
     and al, ~(1<<%1)
@@ -148,16 +155,45 @@ save:
     push fs 
     push gs 
 
-    mov esi, esp
-    mov esp, kernel_esp
-    push restart_current_process
-    push esi
-
     mov ax, ss 
     mov ds, ax 
     mov es, ax 
     mov fs, ax 
 
+    mov esi, esp
+
+    lock inc dword [k_reenter]           ; 如果没有重入，则为-1，inc后为0
+    jnz set_restart1
+
+    mov esp, kernel_esp
+    push restart_current_process
+    push esi
+    xor ebp, ebp
+    jmp [esi+offset_of_retaddr]
+set_restart1:
+    push re_enter
     jmp [esi+offset_of_retaddr]
 
+
+; void start_process(process * proc);
+start_process:
+    mov eax, dword [esp+4]
+    mov dword [current_proc], eax
+
+; void restart_current_process();
+restart_current_process:
+    mov esp, dword [current_proc]
+    lldt [esp + 80]
+    lea eax, [esp+76]
+    mov dword [tss+4], eax
+re_enter:
+    lock dec dword [k_reenter]
+    pop gs 
+    pop fs 
+    pop es 
+    pop ds 
+    popad
+
+    add esp, 8
+    iretd
     

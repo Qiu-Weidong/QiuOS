@@ -21,7 +21,7 @@ char * itoa(char * buffer, int num, int scale)
     
 
     while(p!=tmp) *q++ = *--p;
-    *q++ = '\0';
+    *q = '\0';
     return q;
 }
 

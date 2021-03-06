@@ -15,102 +15,23 @@
 
 public uint32_t volatile dis_pos = 2400; // 从第15行开始显示
 public uint8_t volatile dis_color = 0xf; // 默认颜色为白色高亮
+
 public uint64_t gdt[GDT_SIZE];    // gdt表
 public uint64_t idt[IDT_SIZE];    // idt表
 public uint64_t ldt[3];
 public process volatile *current_proc;
+public int32_t k_reenter;           // 中断重入标志
 public task_state_segment tss;
 
 public uint8_t stack[16][1024];
 public process tasks[16];
 tty _tty;
 
-int volatile cnt = 0;
-atomic_t lock;
-int a = 0,b=0,c=0,d=0;
 private 
 int usrprogA(int argc, char ** argv)
 {
-    char msg[] = "QiuOS";
-    // printf("hello %s world!\n",msg);
-    // printf("put a char %c\n",'*');
-    int x = 0x3f3f3f3f;
-    printf("hex : %x\n",x);
-    printf("dec : %d\n",x);
-    printf("oct : %o\n",x);
-    // printf("bin : %b\n")
-    // assert(0);
-    panic("fatal error!");
-    for(;;);
-}
-
-private 
-int usrprogB(int argc, char ** argv)
-{
-    dis_color = HIGHLIGHT | FG_MAGENTA;
-    puts("process B start!\n");
-    for(int i=0;i<100000;i++)
-    {
-        while(test_and_set(&lock));
-        cnt++;
-        atomic_clear(&lock);
-    }
-    dis_color = HIGHLIGHT | FG_MAGENTA;
-    puts("process B end!\n");
-    b = 1;
-    if(a && b && c && d) putdec(cnt);
-    while(test_and_set(&lock));
-    puts("process B pid:");
-    puthex(getpid());
-    putln();
-    atomic_clear(&lock);
-    for(;;);
-}
-private
-int usrprogC(int argc, char ** argv)
-{
-    dis_color = HIGHLIGHT | FG_YELLOW;
-    puts("process C start!\n");
-    for(int i=0;i<100000;i++)
-    {
-        while(test_and_set(&lock));
-        cnt++;
-        atomic_clear(&lock);
-    }
-    dis_color = HIGHLIGHT | FG_YELLOW;
-    puts("process C end!\n");
-    c = 1;
-    if(a && b && c && d) putdec(cnt);
-    while(test_and_set(&lock));
-    puts("process C pid:");
-    puthex(getpid());
-    putln();
-    atomic_clear(&lock);
-    for(;;);
-}
-private
-int usrprogD(int argc, char ** argv)
-{
-    dis_color = HIGHLIGHT | FG_GREEN;
-    puts("process D start!\n");
-    for(int i=0;i<100000;i++)
-    {
-        // test_and_set(&lock);
-        while(test_and_set(&lock))
-            ;
-        cnt++;
-        atomic_clear(&lock);
-    }
-    dis_color = HIGHLIGHT | FG_GREEN;
-    puts("process D end!\n");
-    d = 1;
-    if(a && b && c && d) putdec(cnt);
-
-    while(test_and_set(&lock));
-    puts("process D pid:");
-    puthex(getpid());
-    putln();
-    atomic_clear(&lock);
+    // write(1, "hello world!",10);
+    sendrec(0,0,nullptr);
     for(;;);
 }
 
@@ -144,9 +65,7 @@ int kernel_main()
     tty_init(&_tty);
     console_init(&_tty.csl,0x0, 0x4000);
 
-
-    // assert(0);
-
+    k_reenter = 0;
 
     start_process(proc);
     shutdown();

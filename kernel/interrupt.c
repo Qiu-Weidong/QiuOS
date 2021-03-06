@@ -49,18 +49,10 @@ void idt_init()
     // 先初始化8259A
     init_8259a();
 
-    // 开启键盘中断
-    // enable_irq(0);
-    // enable_irq(1);
-    // keyboard_init();
-
     const selector_t cs_selector = (1 << 3) + SA_RPL0 + SA_TIG;
 
-    // 0~19设置为陷阱门
-    for (int i = 0; i < 20; i++)
-        idt[i] = make_trap_gate(intr_stubs[i], cs_selector, 0);
-    // 剩下的设置为中断门
-    for (int i = 20; i < IDT_SIZE; i++)
+    // 全部设置为中断门
+    for (int i = 0; i < IDT_SIZE; i++)
         idt[i] = make_intr_gate(intr_stubs[i], cs_selector, 0);
 
     for (int i = 0; i < IDT_SIZE; i++)

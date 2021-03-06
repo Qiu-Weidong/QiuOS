@@ -6,6 +6,7 @@
 
 size_t write(filedesc_t , void *, size_t);
 
+public
 size_t printf(const char *format, ...)
 {
     size_t size;
@@ -19,6 +20,7 @@ size_t printf(const char *format, ...)
     return size;
 }
 
+public
 size_t vsnprintf(char *buffer, size_t size, const char *format, va_list list)
 {
     char *p = buffer;
@@ -59,15 +61,15 @@ size_t vsnprintf(char *buffer, size_t size, const char *format, va_list list)
             break;
         case 'x':
             type.s32 = va_arg(next_arg, int);
-            p = itoa(p,type.s32,16)-1;
+            p = itoa(p,type.s32,16);
             break;
         case 'd':
             type.s32 = va_arg(next_arg, int);
-            p = itoa(p,type.s32,10)-1;
+            p = itoa(p,type.s32,10);
             break;
         case 'o':
             type.s32 = va_arg(next_arg, int);
-            p = itoa(p,type.s32,8)-1;
+            p = itoa(p,type.s32,8);
             break;
         case 'c':
             type.s8 = va_arg(next_arg, int);
@@ -88,10 +90,22 @@ size_t vsnprintf(char *buffer, size_t size, const char *format, va_list list)
             break;
         }
     }
-    // *p++ = '\0';
+    *p = '\0';
     return p - buffer;
 }
 
+public
+size_t snprintf(char * buffer, size_t size, const char * fmt, ...)
+{
+    char buf[256];
+    va_list args;
+    va_start(args,fmt);
+    size = vsnprintf(buf,size,fmt,args);
+    va_end(args);
+
+    size = write(STDOUT_FILENO, buf, size);
+    return size;
+}
 public
 void panic(const char *fmt,...)
 {

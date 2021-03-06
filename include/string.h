@@ -68,14 +68,14 @@ char *strcpy(char *dest, const char *src);
 /// @brief 将src指向的字符串复制到dest,最多复制size个字节
 /// @param dest 目标地址
 /// @param src 源字符串
-/// @param size 最多复制size个字节
+/// @param size 最多复制size个字节 `print'
 /// @return dest
 //////////////////////////////////////////////////////
 public
 char *strncpy(char *dest, const char *src, size_t size);
 
 //////////////////////////////////////////////////////
-/// @brief 将src指向的字符串追加到dest
+/// @brief 将src指向的字符串追加到dest `print'
 /// @param dest 目标地址
 /// @param src 源字符串
 /// @return dest
