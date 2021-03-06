@@ -1,5 +1,5 @@
-#ifndef QIUOS_CONSOLE_H_
-#define QIUOS_CONSOLE_H_
+#ifndef QIUNIX_CONSOLE_H_
+#define QIUNIX_CONSOLE_H_
 #include "type.h"
 
 // 显存一共32KB，8000=10 0000   00 0000 0000
@@ -61,4 +61,4 @@ void screen_putc(console *csl, char c);
 public 
 void console_init(console *csl, uint32_t base, uint32_t limit);
 
-#endif // QIUOS_CONSOLE_H_
+#endif // QIUNIX_CONSOLE_H_

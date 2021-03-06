@@ -1,5 +1,5 @@
-#ifndef QIUOS_GLOBAL_H_
-#define QIUOS_GLOBAL_H_
+#ifndef QIUNIX_GLOBAL_H_
+#define QIUNIX_GLOBAL_H_
 
 #include "type.h"
 #include "tss.h"
@@ -16,6 +16,7 @@ extern uint8_t stack[][1024];
 extern process tasks[];
 
 extern tty _tty;
+extern int32_t k_reenter;    
 
 
-#endif // QIUOS_GLOBAL_H_
+#endif // QIUNIX_GLOBAL_H_

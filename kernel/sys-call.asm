@@ -17,7 +17,9 @@ _NR_getpid      equ 4
 _NR_write       equ 5
 _NR_sendrec     equ 6
 
-; 参数会依次按照ebx、ecx、edx、esi、edi、ebp传递
+; ebx、esp为被调用者保存寄存器
+
+; 参数会依次按照ecx、edx、esi、edi传递
 halt:
     mov eax, _NR_halt
     int intr_syscall
@@ -25,11 +27,9 @@ halt:
 
 ; void exit(int status);
 exit:
-    push ebx
     mov eax, _NR_exit
-    mov ebx, [esp+8]
+    mov ecx, [esp+4]
     int intr_syscall
-    pop ebx
     ret
 
 getpid:
@@ -38,23 +38,19 @@ getpid:
     ret
 
 write:
-    push ebx
     mov eax, _NR_write
-    mov ebx, [esp+8]
-    mov ecx, [esp+12]
-    mov edx, [esp+16]
+    mov ecx, [esp+4]
+    mov edx, [esp+8]
+    mov esi, [esp+12]
     int intr_syscall
-    pop ebx
     ret
 
 ; int sendrec(int function, int src_dest, message * msg);
 sendrec:
-    push ebx
     mov eax, _NR_sendrec
-    mov ebx, [esp+8]        ; function
-    mov ecx, [esp+12]        ; src_dest
-    mov edx, [esp+16]       ; msg
+    mov ecx, [esp+4]        ; function
+    mov edx, [esp+8]        ; src_dest
+    mov esi, [esp+12]       ; msg
     int intr_syscall
-    pop ebx
     ret
 

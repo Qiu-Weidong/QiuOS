@@ -1,5 +1,5 @@
-#ifndef QIUOS_CTYPE_H_
-#define QIUOS_CTYPE_H_
+#ifndef QIUNIX_CTYPE_H_
+#define QIUNIX_CTYPE_H_
 
 #include "type.h"
 
@@ -74,4 +74,4 @@ static inline char toupper(char c)
     return islower(c) ? c - 'a' + 'A' : c;
 }
 
-#endif // QIUOS_CTYPE_H_
+#endif // QIUNIX_CTYPE_H_

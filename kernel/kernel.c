@@ -31,7 +31,7 @@ private
 int usrprogA(int argc, char ** argv)
 {
     // write(1, "hello world!",10);
-    sendrec(0,0,nullptr);
+    sendrec(64,32,nullptr);
     for(;;);
 }
 
@@ -46,7 +46,7 @@ int kernel_main()
 
     dis_color = HIGHLIGHT | FG_YELLOW | BG_BLACK;
 
-    puts("Welcome to QiuOS World!\n");
+    puts("Welcome to Qiunix World!\n");
 
     dis_color = HIGHLIGHT | FG_BLUE;
     

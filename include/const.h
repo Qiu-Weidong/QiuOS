@@ -1,5 +1,5 @@
-#ifndef QIUOS_CONST_H_
-#define QIUOS_CONST_H_
+#ifndef QIUNIX_CONST_H_
+#define QIUNIX_CONST_H_
 
 // 显示颜色相关
 // BL R G B I R G B
@@ -119,4 +119,4 @@
 #define MAG_CH_PANIC	'\002'
 #define MAG_CH_ASSERT	'\003'
 
-#endif // QIUOS_CONST_H_
+#endif // QIUNIX_CONST_H_

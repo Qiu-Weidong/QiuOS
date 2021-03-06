@@ -1,5 +1,5 @@
-#ifndef QIUOS_STDIO_H_
-#define QIUOS_STDIO_H_
+#ifndef QIUNIX_STDIO_H_
+#define QIUNIX_STDIO_H_
 
 #define STDIN_FILENO 0
 #define STDOUT_FILENO 1
@@ -22,4 +22,4 @@ size_t snprintf(char *, size_t, const char *, ...) PRINTF_FORMAT(3, 4);
 public
 void panic(const char *fmt, ...);
 
-#endif // QIUOS_STDIO_H_
+#endif // QIUNIX_STDIO_H_

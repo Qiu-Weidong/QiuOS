@@ -1,5 +1,5 @@
-#ifndef QIUOS_PROTO_H_
-#define QIUOS_PROTO_H_
+#ifndef QIUNIX_PROTO_H_
+#define QIUNIX_PROTO_H_
 #include "type.h"
 
 public
@@ -22,4 +22,4 @@ uint64_t make_intr_gate(intr_stub func, selector_t selector, uint8_t dpl);
 public
 uint64_t make_task_gate(selector_t selector, uint8_t dpl);
 
-#endif // QIUOS_PROTO_H_
+#endif // QIUNIX_PROTO_H_

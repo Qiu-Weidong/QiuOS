@@ -9,7 +9,7 @@ romimage:file="/usr/local/share/bochs/BIOS-bochs-latest"
 vgaromimage:file="/usr/local/share/bochs/VGABIOS-lgpl-latest"
 
 # 使用磁盘
-floppya:1_44=QiuOS.img, status=inserted
+floppya:1_44=Qiunix.img, status=inserted
 
 # 启动盘
 boot: floppy 

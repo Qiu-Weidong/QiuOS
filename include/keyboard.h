@@ -1,5 +1,5 @@
-#ifndef QIUOS_KEYBOARD_H_
-#define QIUOS_KEYBOARD_H_
+#ifndef QIUNIX_KEYBOARD_H_
+#define QIUNIX_KEYBOARD_H_
 #include "type.h"
 #include "interrupt.h"
 
@@ -128,4 +128,4 @@ void keyboard_handler(const intr_frame *frame UNUSED);
 public
 uint32_t keyboard_read();
 
-#endif // QIUOS_KEYBOARD_H_
+#endif // QIUNIX_KEYBOARD_H_

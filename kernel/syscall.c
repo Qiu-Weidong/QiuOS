@@ -31,12 +31,11 @@ size_t sys_write(filedesc_t fd, const void * buffer, size_t size)
     atomic_clear(&p_tty->lock);
     return size;
 }
+
+
+
 private
-int sys_sendrec(int function, int src_dest, message * msg, process* p)
-{
-    sys_write(1, "sys_sendrec",11);
-    return 0;
-}
+int sys_sendrec(int function, int src_dest, message * msg, process* p);
 
 public 
 void syscall_handler(intr_frame * frame)
@@ -47,20 +46,33 @@ void syscall_handler(intr_frame * frame)
         sys_halt();
         break;
     case _NR_exit:
-        sys_exit(frame->ebx);
+        sys_exit(frame->ecx);
         break;
     case _NR_getpid:
         frame->eax = sys_getpid();
         break;
     case _NR_write:
-        frame->eax = sys_write(frame->ebx, (const void *)frame->ecx, frame->edx);
+        frame->eax = sys_write(frame->ecx, (const void *)frame->edx, frame->esi);
         break;
     
     case _NR_sendrec:
-        frame->eax = sys_sendrec(frame->ebx, frame->ecx, frame->edx,(process *)frame);
+        frame->eax = sys_sendrec(frame->ecx, frame->edx, frame->esi,(process *)frame);
         break;
     default:
         break;
     }
 }
 
+/*
+ * <Ring 0 >
+*/
+private
+int sys_sendrec(int function, int src_dest, message * msg, process* p)
+{
+    assert(k_reenter == 0); // 当处于ring0发生中断时，k_reenter会大于0
+    pid_t caller = p->pid;
+
+    int ret = 0;
+
+
+}

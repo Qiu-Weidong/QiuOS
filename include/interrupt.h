@@ -1,5 +1,5 @@
-#ifndef QIUOS_INTERRUPT_H_
-#define QIUOS_INTERRUPT_H_
+#ifndef QIUNIX_INTERRUPT_H_
+#define QIUNIX_INTERRUPT_H_
 #include "type.h"
 #define IDT_SIZE 256
 
@@ -56,4 +56,4 @@ void disable_irq(int irq);
 
 typedef void (*intr_handler)(const intr_frame *);
 
-#endif // QIUOS_INTERRUPT_H_
+#endif // QIUNIX_INTERRUPT_H_

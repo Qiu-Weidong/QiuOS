@@ -12,7 +12,7 @@ void task_tty()
     tty_init(&_tty);
     console_init(&_tty.csl,0x0, 0x4000);
 
-    char msg[] = "QiuOS";
+    char msg[] = "Qiunix";
     printf("hello %s world!\n",msg);
     
     while (true)

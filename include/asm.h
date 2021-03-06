@@ -1,5 +1,5 @@
-#ifndef QIUOS_ASM_H_
-#define QIUOS_ASM_H_
+#ifndef QIUNIX_ASM_H_
+#define QIUNIX_ASM_H_
 
 // 常用的内嵌汇编语句
 // 注意，为避免与int关键字同名，int指令声明为intr
@@ -120,4 +120,4 @@
 
 #define ljmp(fptr) __asm__ volatile("ljmp *(%0)" ::"g"(fptr))
 
-#endif // QIUOS_ASM_H_
+#endif // QIUNIX_ASM_H_

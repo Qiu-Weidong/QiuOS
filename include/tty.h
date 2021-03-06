@@ -1,5 +1,5 @@
-#ifndef QIUOS_TTY_H_
-#define QIUOS_TTY_H_
+#ifndef QIUNIX_TTY_H_
+#define QIUNIX_TTY_H_
 #include "console.h"
 #include "keyboard.h"
 #include "atomic.h"
@@ -20,4 +20,4 @@ public
 void tty_init(tty * tty);
 
 
-#endif // QIUOS_TTY_H_
+#endif // QIUNIX_TTY_H_

@@ -1,5 +1,5 @@
-#ifndef QIUOS_IO_H_
-#define QIUOS_IO_H_
+#ifndef QIUNIX_IO_H_
+#define QIUNIX_IO_H_
 #include "type.h"
 
 public
@@ -20,4 +20,4 @@ int getchar();
 public
 int getline(char *buffer);
 
-#endif // QIUOS_IO_H_
+#endif // QIUNIX_IO_H_
