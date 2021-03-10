@@ -1,4 +1,4 @@
-# Makefile for Qiunix
+# Makefile for Qiux
 
 # 编译、链接、调试和运行程序
 ASM 		:= nasm
@@ -40,7 +40,7 @@ ASMSOURCE	:= $(notdir $(wildcard kernel/*.asm lib/*.asm))
 OBJS		:= $(addprefix $(BUILD)/,$(CSOURCE:.c=.o) $(ASMSOURCE:.asm=.o))
 
 # 目标文件
-IMG 		:= Qiunix.img 
+IMG 		:= Qiux.img 
 BOOT 		:= $(BUILD)/boot.bin
 LOADER 		:= $(BUILD)/loader.bin
 KERNEL		:= $(BUILD)/kernel.bin

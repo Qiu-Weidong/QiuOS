@@ -1,5 +1,5 @@
-#ifndef QIUNIX_GLOBAL_H_
-#define QIUNIX_GLOBAL_H_
+#ifndef QIUX_GLOBAL_H_
+#define QIUX_GLOBAL_H_
 
 #include "type.h"
 #include "tss.h"
@@ -19,4 +19,4 @@ extern tty _tty;
 extern int32_t k_reenter;    
 
 
-#endif // QIUNIX_GLOBAL_H_
+#endif // QIUX_GLOBAL_H_

@@ -1,4 +1,4 @@
-#ifndef QIUNIX_SHUTDOWN_H_
+#ifndef QIUX_SHUTDOWN_H_
 #include "io.h"
 #include "const.h"
 
@@ -15,4 +15,4 @@ void request_shutdown_port() NO_RETURN;
 public
 void reboot();
 
-#endif // QIUNIX_SHUTDOWN_H_
+#endif // QIUX_SHUTDOWN_H_

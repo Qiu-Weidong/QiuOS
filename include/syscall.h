@@ -1,5 +1,5 @@
-#ifndef QIUNIX_SYSCALL_H_
-#define QIUNIX_SYSCALL_H_
+#ifndef QIUX_SYSCALL_H_
+#define QIUX_SYSCALL_H_
 #include "interrupt.h"
 #include "proc.h"
 
@@ -33,4 +33,4 @@ int sendrec(int function, int src_dest, message * msg);
 public 
 void syscall_handler(intr_frame * frame);
 
-#endif // QIUNIX_SYSCALL_H_
+#endif // QIUX_SYSCALL_H_

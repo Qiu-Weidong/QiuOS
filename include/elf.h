@@ -1,5 +1,5 @@
-#ifndef QIUNIX_ELF_H_
-#define QIUNIX_ELF_H_
+#ifndef QIUX_ELF_H_
+#define QIUX_ELF_H_
 
 #define EI_NIDENT 16
 
@@ -57,4 +57,4 @@ typedef struct
     Elf32_Word      sh_entsize;     // 某些节区中包含固定大小的项目，如符号表。对于这类节区，此成员给出每个表项的长度字节数。
 } Elf32_Shdr;
 
-#endif // QIUNIX_ELF_H_
+#endif // QIUX_ELF_H_

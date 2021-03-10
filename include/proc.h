@@ -1,5 +1,5 @@
-#ifndef QIUNIX_PROC_H_
-#define QIUNIX_PROC_H_
+#ifndef QIUX_PROC_H_
+#define QIUX_PROC_H_
 #include "type.h"
 #include "interrupt.h"
 #include "tty.h"
@@ -29,4 +29,4 @@ void task_schedule(const intr_frame *frame UNUSED);
 public
 process *create_process(process_func proc_main);
 
-#endif // QIUNIX_PROC_H_
+#endif // QIUX_PROC_H_

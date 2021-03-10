@@ -1,5 +1,5 @@
-#ifndef QIUNIX_TYPE_H_
-#define QIUNIX_TYPE_H_
+#ifndef QIUX_TYPE_H_
+#define QIUX_TYPE_H_
 
 #define public
 #define private static
@@ -80,4 +80,4 @@ typedef struct
         } u;
 } message;
 
-#endif // QIUNIX_TYPE_H_
+#endif // QIUX_TYPE_H_

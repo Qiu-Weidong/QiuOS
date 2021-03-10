@@ -1,5 +1,5 @@
-#ifndef QIUNIX_STRING_H_
-#define QIUNIX_STRING_H_
+#ifndef QIUX_STRING_H_
+#define QIUX_STRING_H_
 #include "type.h"
 
 //////////////////////////////////////////////////////
@@ -158,4 +158,4 @@ char *strstr(char *str, const char *substr);
 public
 char *strtok_r(char *str, const char *delim, char **saveptr);
 
-#endif // QIUNIX_STRING_H_
+#endif // QIUX_STRING_H_

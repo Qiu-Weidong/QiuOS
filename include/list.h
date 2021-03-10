@@ -1,5 +1,5 @@
-#ifndef QIUNIX_LIST_H_
-#define QIUNIX_LIST_H_
+#ifndef QIUX_LIST_H_
+#define QIUX_LIST_H_
 #include "type.h"
 
 typedef struct s_list_elem
@@ -71,4 +71,4 @@ public
 bool_t list_empty(list * list);
 
 
-#endif // QIUNIX_LIST_H_
+#endif // QIUX_LIST_H_

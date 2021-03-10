@@ -1,5 +1,5 @@
-#ifndef QIUNIX_GDT_H_
-#define QIUNIX_GDT_H_
+#ifndef QIUX_GDT_H_
+#define QIUX_GDT_H_
 #include "type.h"
 
 #define GDT_SIZE 128
@@ -37,4 +37,4 @@ void gdt_init();
 public 
 size_t gdt_size();
 
-#endif // QIUNIX_GDT_H_
+#endif // QIUX_GDT_H_

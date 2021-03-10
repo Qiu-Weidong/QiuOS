@@ -1,5 +1,5 @@
-#ifndef QIUNIX_STDLIB_H_
-#define QIUNIX_STDLIB_H_
+#ifndef QIUX_STDLIB_H_
+#define QIUX_STDLIB_H_
 #include "type.h"
 
 public
@@ -16,4 +16,4 @@ void * bsearch(const void * key, const void * array, size_t cnt, size_t size,int
 
 
 
-#endif // QIUNIX_STDLIB_H_
+#endif // QIUX_STDLIB_H_

@@ -1,5 +1,5 @@
-#ifndef QIUNIX_ATOMIC_H_
-#define QIUNIX_ATOMIC_H_
+#ifndef QIUX_ATOMIC_H_
+#define QIUX_ATOMIC_H_
 
 typedef struct
 {
@@ -99,4 +99,4 @@ static inline void atomic_neg(atomic_t *v)
                      : "+m"(v->value));
 }
 
-#endif // QIUNIX_ATOMIC_H_
+#endif // QIUX_ATOMIC_H_

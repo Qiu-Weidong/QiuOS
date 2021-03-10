@@ -1,5 +1,5 @@
-#ifndef QIUNIX_TSS_H_
-#define QIUNIX_TSS_H_
+#ifndef QIUX_TSS_H_
+#define QIUX_TSS_H_
 #include "type.h"
 #define TSS_MAX_SIZE 128
 // task state segment(tss) 任务状态段
@@ -27,4 +27,4 @@ typedef struct s_task_state_segment
     uint16_t trace, bitmap;
 }task_state_segment;
 
-#endif // QIUNIX_TSS_H_
+#endif // QIUX_TSS_H_

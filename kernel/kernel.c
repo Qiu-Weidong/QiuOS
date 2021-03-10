@@ -46,7 +46,7 @@ int kernel_main()
 
     dis_color = HIGHLIGHT | FG_YELLOW | BG_BLACK;
 
-    puts("Welcome to Qiunix World!\n");
+    puts("Welcome to Qiux World!\n");
 
     dis_color = HIGHLIGHT | FG_BLUE;
     
