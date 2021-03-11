@@ -63,6 +63,7 @@ void syscall_handler(intr_frame * frame)
     }
 }
 
+void * va2la(pid_t pid, void *p) { return p ; }
 /*
  * <Ring 0 >
 */
@@ -73,6 +74,9 @@ int sys_sendrec(int function, int src_dest, message * msg, process* p)
     pid_t caller = p->pid;
 
     int ret = 0;
-
+    int caller = p->pid;
+    message * mla = (message *) va2la(caller, msg);
+    mla->source = caller;
+    
 
 }

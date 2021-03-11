@@ -62,8 +62,8 @@ int kernel_main()
     tss.ss0 = SEL_KERNEL_DS;
     ltr(SEL_TSS);
 
-    tty_init(&_tty);
-    console_init(&_tty.csl,0x0, 0x4000);
+    // tty_init(&_tty);
+    // console_init(&_tty.csl,0x0, 0x4000);
 
     k_reenter = 0;
 
