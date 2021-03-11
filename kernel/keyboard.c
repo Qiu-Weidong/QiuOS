@@ -4,36 +4,17 @@
 #include "keyboard.h"
 #include "tty.h"
 
-private
-keyboard_buffer kb_buf;
+private keyboard_buffer kb_buf;
 
-// private
-// int code_with_E0;
-private
-int shift_l; /* l shift state */
-private
-int shift_r; /* r shift state */
-private
-int alt_l; /* l alt state	 */
-private
-int alt_r; /* r left state	 */
-private
-int ctrl_l; /* l ctrl state	 */
-private
-int ctrl_r; /* l ctrl state	 */
-private
-int caps_lock; /* Caps Lock	 */
-private
-int num_lock; /* Num Lock	 */
-private
-int scroll_lock; /* Scroll Lock	 */
-
-private
-int caps_lock; /* Caps Lock	 */
-private
-int num_lock; /* Num Lock	 */
-private
-int scroll_lock; /* Scroll Lock	 */
+private int shift_l;
+private int shift_r;
+private int alt_l;
+private int alt_r;
+private int ctrl_l;
+private int ctrl_r;
+private int caps_lock;
+private int num_lock;
+private int scroll_lock;
 
 uint32_t keymap[NR_SCAN_CODES * MAP_COLS] = {
 
@@ -166,7 +147,10 @@ uint32_t keymap[NR_SCAN_CODES * MAP_COLS] = {
     /* 0x7C - ???		*/ 0, 0, 0,
     /* 0x7D - ???		*/ 0, 0, 0,
     /* 0x7E - ???		*/ 0, 0, 0,
-    /* 0x7F - ???		*/ 0, 0, 0};
+    /* 0x7F - ???		*/ 0, 0, 0
+};
+
+
 private
 void set_leds();
 public

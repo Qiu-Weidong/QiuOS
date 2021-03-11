@@ -29,4 +29,7 @@ void task_schedule(const intr_frame *frame UNUSED);
 public
 process *create_process(process_func proc_main);
 
+public 
+void reset_msg(message * msg);
+
 #endif // QIUX_PROC_H_

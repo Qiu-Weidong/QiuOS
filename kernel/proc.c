@@ -2,6 +2,7 @@
 #include "global.h"
 #include "const.h"
 #include "gdt.h"
+#include "../include/string.h"
 
 
 public 
@@ -31,4 +32,34 @@ process * create_process(process_func proc_main)
     proc->p_tty = &_tty;
     next_pid++;
     return proc;
+}
+
+public
+void reset_msg(message * msg)
+{
+    memset(msg, 0, sizeof(message));
+}
+
+private 
+void block(process * proc)
+{
+    task_schedule((const intr_frame *)proc);
+}
+
+private
+void unblock(process * proc)
+{
+
+}
+
+public 
+int msg_receive(process * current, int src, message * msg)
+{
+
+} 
+
+public
+int msg_send(process * current, int dest, message * msg)
+{
+
 }
